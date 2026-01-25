@@ -43,9 +43,10 @@ try {
     
     // Get campaigns from database
     if ($search_term) {
-        // Use full-text search
-        $all_results = search_campaigns($search_term, 1000);
-        $total_count = count($all_results);
+        // Use full-text search with proper signature
+        $search_results = search_campaigns($search_term, [], 1, 1000);
+        $all_results = $search_results['results'];
+        $total_count = $search_results['total'];
     } else {
         // Get total count
         $total_count = get_campaign_count(false);
