@@ -46,8 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             // Automation Settings
             update_setting('cron_token', !empty($_POST['cron_token']) ? trim($_POST['cron_token']) : null);
             
-            // Analytics Settings
-            update_setting('google_analytics_id', !empty($_POST['google_analytics_id']) ? trim($_POST['google_analytics_id']) : null);
+            // Analytics Settings - validate Google Analytics 4 Measurement ID format
+            $ga_id = !empty($_POST['google_analytics_id']) ? trim($_POST['google_analytics_id']) : null;
+            if ($ga_id !== null && !preg_match('/^G-[A-Z0-9]+$/', $ga_id)) {
+                throw new Exception('Invalid Google Analytics 4 Measurement ID format. Must be in format G-XXXXXXXXXX (e.g., G-ABC123DEF4)');
+            }
+            update_setting('google_analytics_id', $ga_id);
             
             // Localization Settings
             update_setting('locale', !empty($_POST['locale']) ? trim($_POST['locale']) : null);

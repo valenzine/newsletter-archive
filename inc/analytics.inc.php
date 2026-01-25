@@ -4,7 +4,15 @@
  * 
  * Loads GA4 tracking code if a Measurement ID is configured.
  * Configure in admin settings or via GOOGLE_ANALYTICS_ID in .env
+ * 
+ * Note: Only loads on public pages, NOT on admin/setup pages
  */
+
+// Skip analytics on admin/setup pages to prevent polluting analytics data
+$request_uri = $_SERVER['REQUEST_URI'] ?? '';
+if (str_starts_with($request_uri, '/setup/') || str_starts_with($request_uri, '/setup')) {
+    return;
+}
 
 // Ensure bootstrap is loaded for settings access
 if (!function_exists('get_setting')) {
