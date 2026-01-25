@@ -363,7 +363,7 @@ function search_campaigns(string $query, array $filters = [], int $page = 1, int
             'preview_text' => $campaign['preview_text'] ?? '',
             'sent_at' => $campaign['sent_at'],
             'source' => $campaign['source'],
-            'url' => '/view_campaign.php?id=' . urlencode($campaign['id']),
+            'url' => '/' . urlencode($campaign['id']),
             'excerpt' => $campaign['excerpt'] ?? ''
         ];
     }

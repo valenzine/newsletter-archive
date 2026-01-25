@@ -372,6 +372,10 @@ async function performSearch() {
             // Update page title with search query for analytics
             const siteName = window.searchCfg?.siteName || 'Newsletter Archive';
             document.title = `Search: ${currentQuery} | ${siteName}`;
+            
+            // Track search in Google Analytics
+            trackSearch(currentQuery, data.total);
+            
             displayResults(data);
         } else {
             showError(data.message || data.error);
@@ -551,4 +555,29 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Google Analytics: Track search query
+function trackSearch(query, resultCount) {
+    // Only track if gtag is available (GA4 loaded)
+    if (typeof gtag !== 'function') {
+        return;
+    }
+    
+    // Build the search URL
+    const basePath = window.location.pathname.includes('buscar') ? '/buscar' : '/search';
+    const searchUrl = `${basePath}/${encodeURIComponent(query)}`;
+    
+    // Send search event to GA4
+    gtag('event', 'search', {
+        search_term: query,
+        result_count: resultCount
+    });
+    
+    // Also send as a virtual page view with the search query in the title
+    gtag('event', 'page_view', {
+        page_title: `Search: ${query}`,
+        page_location: window.location.origin + searchUrl,
+        page_path: searchUrl
+    });
 }

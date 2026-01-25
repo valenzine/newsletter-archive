@@ -89,6 +89,9 @@ INSERT OR IGNORE INTO settings (key, value) VALUES ('twitter_creator', NULL);
 -- Automation settings
 INSERT OR IGNORE INTO settings (key, value) VALUES ('cron_token', NULL);
 
+-- Analytics settings
+INSERT OR IGNORE INTO settings (key, value) VALUES ('google_analytics_id', NULL);
+
 -- Localization settings
 INSERT OR IGNORE INTO settings (key, value) VALUES ('locale', NULL);
 

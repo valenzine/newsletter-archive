@@ -82,7 +82,7 @@ try {
                 'iso' => $campaign['sent_at'],
             ],
             'source' => $campaign['source'],
-            'url' => '/view_campaign.php?id=' . $campaign['id'],
+            'url' => '/' . $campaign['id'],
         ];
     }, $all_results);
     
