@@ -14,6 +14,10 @@
 /.env
 *.map
 
+# Development tools
+start-server.sh
+.user.ini
+
 # Development planning files
 /.plan
 
@@ -25,3 +29,6 @@
 !RELEASE_NOTES.md
 !RELEASE-NOTES.md
 !docs/*.md
+
+/sample_mailchimp_zip_contents
+

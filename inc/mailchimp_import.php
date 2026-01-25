@@ -4,9 +4,12 @@
  * Mailchimp Import Logic
  * 
  * Handles one-time import of Mailchimp campaigns from a ZIP export.
- * Expected ZIP structure:
- * - campaigns.csv (metadata)
- * - *.html (campaign HTML files)
+ * 
+ * Expected ZIP structure (Mailchimp exports are nested):
+ * - {numeric_id}/{list_id}/campaigns.csv (metadata)
+ * - {numeric_id}/{list_id}/campaigns_content/*.html (campaign HTML files)
+ * 
+ * Imported campaigns are stored in: /source/mailchimp_campaigns/{campaign_id}.html
  */
 
 require_once __DIR__ . '/database.inc.php';
@@ -16,15 +19,17 @@ require_once __DIR__ . '/functions.php';
  * Process Mailchimp ZIP import
  * 
  * @param array $uploaded_file $_FILES array for the uploaded ZIP
- * @param string $campaigns_content_directory Directory to store HTML files
+ * @param string $destination_directory Directory to store HTML files (/source/mailchimp_campaigns)
  * @return array ['success' => bool, 'message' => string, 'stats' => array]
  */
-function process_mailchimp_import($uploaded_file, $campaigns_content_directory) {
+function process_mailchimp_import($uploaded_file, $destination_directory) {
     $stats = [
         'total' => 0,
         'imported' => 0,
         'skipped' => 0,
-        'errors' => 0
+        'errors' => 0,
+        'unmatched' => 0,
+        'unmatched_list' => []
     ];
     
     // Validate upload
@@ -69,22 +74,43 @@ function process_mailchimp_import($uploaded_file, $campaigns_content_directory) 
         $zip->extractTo($temp_dir);
         $zip->close();
         
-        // Look for campaigns.csv
-        $csv_path = $temp_dir . '/campaigns.csv';
-        if (!file_exists($csv_path)) {
-            throw new Exception('campaigns.csv not found in ZIP archive.');
+        // Find campaigns.csv (may be nested in subdirectories)
+        $csv_path = find_file_recursive($temp_dir, 'campaigns.csv');
+        if (!$csv_path) {
+            throw new Exception('campaigns.csv not found in ZIP archive. Please ensure your Mailchimp export is complete.');
+        }
+        
+        $csv_dir = dirname($csv_path);
+        
+        // Find campaigns_content directory (same level as CSV)
+        $html_source_dir = $csv_dir . '/campaigns_content';
+        if (!is_dir($html_source_dir)) {
+            throw new Exception('campaigns_content directory not found. Expected at: ' . $html_source_dir);
+        }
+        
+        // Build inventory of available HTML files
+        $html_inventory = build_html_file_inventory($html_source_dir);
+        
+        if (empty($html_inventory)) {
+            throw new Exception('No HTML files found in campaigns_content directory.');
         }
         
         // Parse CSV and import campaigns
-        $result = import_campaigns_from_csv($csv_path, $temp_dir, $campaigns_content_directory);
+        $result = import_campaigns_from_csv($csv_path, $html_inventory, $destination_directory);
         $stats = $result['stats'];
         
         // Clean up temp directory
         delete_directory($temp_dir);
         
+        $message = "Import complete: {$stats['imported']} imported, {$stats['skipped']} skipped, {$stats['errors']} errors";
+        if ($stats['unmatched'] > 0) {
+            $message .= ", {$stats['unmatched']} unmatched (metadata only)";
+        }
+        $message .= ".";
+        
         return [
             'success' => true,
-            'message' => "Import complete: {$stats['imported']} imported, {$stats['skipped']} skipped, {$stats['errors']} errors.",
+            'message' => $message,
             'stats' => $stats
         ];
         
@@ -103,19 +129,77 @@ function process_mailchimp_import($uploaded_file, $campaigns_content_directory) 
 }
 
 /**
+ * Find a file recursively in a directory
+ * 
+ * @param string $dir Directory to search
+ * @param string $filename Filename to find
+ * @return string|null Full path to file or null if not found
+ */
+function find_file_recursive($dir, $filename) {
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::SELF_FIRST
+    );
+    
+    foreach ($iterator as $file) {
+        if ($file->isFile() && $file->getFilename() === $filename) {
+            return $file->getPathname();
+        }
+    }
+    
+    return null;
+}
+
+/**
+ * Build inventory of HTML files in campaigns_content directory
+ * 
+ * @param string $dir Directory containing HTML files
+ * @return array Array of file info: [['filename' => '...', 'mailchimp_id' => '...', 'slug' => '...', 'path' => '...'], ...]
+ */
+function build_html_file_inventory($dir) {
+    $inventory = [];
+    
+    $files = scandir($dir);
+    foreach ($files as $file) {
+        if (pathinfo($file, PATHINFO_EXTENSION) !== 'html') {
+            continue;
+        }
+        
+        $full_path = $dir . '/' . $file;
+        
+        // Parse filename: {mailchimp_id}_{slug}.html or {mailchimp_id}_{title}.html
+        // Example: 12020101_-24-george-michael-amigos.html
+        $parts = explode('_', $file, 2);
+        $mailchimp_id = $parts[0] ?? '';
+        $slug = isset($parts[1]) ? pathinfo($parts[1], PATHINFO_FILENAME) : '';
+        
+        $inventory[] = [
+            'filename' => $file,
+            'mailchimp_id' => $mailchimp_id,
+            'slug' => $slug,
+            'path' => $full_path
+        ];
+    }
+    
+    return $inventory;
+}
+
+/**
  * Import campaigns from CSV file
  * 
  * @param string $csv_path Path to campaigns.csv
- * @param string $source_dir Directory containing HTML files
- * @param string $destination_dir Directory to copy HTML files to
+ * @param array $html_inventory Array of available HTML files
+ * @param string $destination_dir Directory to copy HTML files to (/source/mailchimp_campaigns)
  * @return array ['stats' => array]
  */
-function import_campaigns_from_csv($csv_path, $source_dir, $destination_dir) {
+function import_campaigns_from_csv($csv_path, $html_inventory, $destination_dir) {
     $stats = [
         'total' => 0,
         'imported' => 0,
         'skipped' => 0,
-        'errors' => 0
+        'errors' => 0,
+        'unmatched' => 0,
+        'unmatched_list' => []
     ];
     
     $pdo = get_database();
@@ -137,12 +221,12 @@ function import_campaigns_from_csv($csv_path, $source_dir, $destination_dir) {
         throw new Exception('Invalid CSV format - no header row');
     }
     
-    // Expected columns: name, subject, sent_at, html_file
-    $required_columns = ['subject', 'sent_at', 'html_file'];
+    // Expected Mailchimp columns: Title, Subject, Send Date, Unique Id
+    $required_columns = ['Subject', 'Send Date'];
     foreach ($required_columns as $col) {
         if (!in_array($col, $header)) {
             fclose($handle);
-            throw new Exception("Missing required column: $col");
+            throw new Exception("Missing required CSV column: $col");
         }
     }
     
@@ -154,30 +238,32 @@ function import_campaigns_from_csv($csv_path, $source_dir, $destination_dir) {
         $stats['total']++;
         
         try {
-            $subject = $row[$col_map['subject']] ?? '';
-            $sent_at = $row[$col_map['sent_at']] ?? '';
-            $html_file = $row[$col_map['html_file']] ?? '';
-            $name = isset($col_map['name']) ? ($row[$col_map['name']] ?? '') : '';
-            $preview_text = isset($col_map['preview_text']) ? ($row[$col_map['preview_text']] ?? '') : '';
+            // Extract CSV data using actual Mailchimp column names
+            $title = isset($col_map['Title']) ? ($row[$col_map['Title']] ?? '') : '';
+            $subject = $row[$col_map['Subject']] ?? '';
+            $send_date_raw = $row[$col_map['Send Date']] ?? '';
+            $unique_id = isset($col_map['Unique Id']) ? ($row[$col_map['Unique Id']] ?? '') : '';
             
             // Validate required fields
-            if (empty($subject) || empty($sent_at) || empty($html_file)) {
+            if (empty($subject) || empty($send_date_raw)) {
                 $stats['errors']++;
                 continue;
             }
             
-            // Parse date (support multiple formats)
-            $timestamp = strtotime($sent_at);
+            // Clean and parse date (Mailchimp format: "May 19, 2019 06:00 pm" with quotes)
+            $send_date_clean = trim($send_date_raw, '"');
+            $timestamp = strtotime($send_date_clean);
             if ($timestamp === false) {
+                error_log("Mailchimp import: Failed to parse date: $send_date_raw");
                 $stats['errors']++;
                 continue;
             }
             $sent_at_formatted = date('Y-m-d H:i:s', $timestamp);
             
-            // Generate unique ID (hash of subject + date)
+            // Generate unique campaign ID
             $campaign_id = generate_campaign_id([
                 'source' => 'mailchimp',
-                'source_id' => '', // Mailchimp CSV doesn't have campaign IDs
+                'source_id' => $unique_id,
                 'sent_at' => $sent_at_formatted,
                 'subject' => $subject
             ]);
@@ -190,21 +276,33 @@ function import_campaigns_from_csv($csv_path, $source_dir, $destination_dir) {
                 continue;
             }
             
-            // Copy HTML file to destination
-            $source_html = $source_dir . '/' . $html_file;
-            if (!file_exists($source_html)) {
-                $stats['errors']++;
-                continue;
+            // Try to match CSV row to HTML file
+            $matched_html = match_html_file($subject, $title, $unique_id, $html_inventory);
+            
+            $content_path = null;
+            
+            if ($matched_html) {
+                // Copy HTML file to destination
+                $destination_html = $destination_dir . '/' . $campaign_id . '.html';
+                if (copy($matched_html['path'], $destination_html)) {
+                    // Calculate relative path for database
+                    $content_path = str_replace(dirname(__DIR__) . '/', '', $destination_html);
+                } else {
+                    error_log("Mailchimp import: Failed to copy HTML file: {$matched_html['path']}");
+                }
+            } else {
+                // No matching HTML file found - import metadata only
+                $stats['unmatched']++;
+                $stats['unmatched_list'][] = [
+                    'subject' => $subject,
+                    'title' => $title,
+                    'date' => $sent_at_formatted,
+                    'unique_id' => $unique_id
+                ];
             }
             
-            $destination_html = $destination_dir . '/' . $campaign_id . '.html';
-            if (!copy($source_html, $destination_html)) {
-                $stats['errors']++;
-                continue;
-            }
-            
-            // Calculate relative path for database
-            $content_path = str_replace(dirname(__DIR__) . '/', '', $destination_html);
+            // Use subject as name if title is empty or just a number pattern
+            $name = (!empty($title) && !preg_match('/^#?\d+$/', $title)) ? $title : $subject;
             
             // Insert into database
             $stmt = $pdo->prepare('
@@ -214,25 +312,117 @@ function import_campaigns_from_csv($csv_path, $source_dir, $destination_dir) {
             
             $stmt->execute([
                 $campaign_id,
-                $name ?: $subject,
+                $name,
                 $subject,
-                $preview_text,
+                '', // Mailchimp export doesn't include preview text
                 $sent_at_formatted,
                 'mailchimp',
                 $content_path
             ]);
             
+            // Index for full-text search if we have content
+            if ($content_path && file_exists($destination_dir . '/' . $campaign_id . '.html')) {
+                $html_content = file_get_contents($destination_dir . '/' . $campaign_id . '.html');
+                index_campaign_content($campaign_id, $subject, $html_content);
+            }
+            
             $stats['imported']++;
             
         } catch (Exception $e) {
             $stats['errors']++;
-            error_log('Mailchimp import error: ' . $e->getMessage());
+            error_log('Mailchimp import row error: ' . $e->getMessage());
         }
     }
     
     fclose($handle);
     
     return ['stats' => $stats];
+}
+
+/**
+ * Match a CSV row to an HTML file from inventory
+ * 
+ * @param string $subject Campaign subject
+ * @param string $title Campaign title
+ * @param string $unique_id Mailchimp unique ID
+ * @param array $html_inventory Array of HTML file data
+ * @return array|null Matched HTML file data or null
+ */
+function match_html_file($subject, $title, $unique_id, $html_inventory) {
+    // Strategy 1: Try exact match by Mailchimp unique ID (if it appears in filename)
+    if (!empty($unique_id)) {
+        foreach ($html_inventory as $html_file) {
+            if (strpos($html_file['mailchimp_id'], $unique_id) !== false || 
+                strpos($html_file['filename'], $unique_id) !== false) {
+                return $html_file;
+            }
+        }
+    }
+    
+    // Strategy 2: Match by subject slug similarity
+    $subject_slug = normalize_for_matching($subject);
+    $title_slug = normalize_for_matching($title);
+    
+    $best_match = null;
+    $best_score = 0;
+    
+    foreach ($html_inventory as $html_file) {
+        $file_slug = normalize_for_matching($html_file['slug']);
+        
+        // Calculate similarity with both subject and title
+        $subject_similarity = calculate_similarity($subject_slug, $file_slug);
+        $title_similarity = $title ? calculate_similarity($title_slug, $file_slug) : 0;
+        
+        $score = max($subject_similarity, $title_similarity);
+        
+        // Require at least 70% similarity to consider it a match
+        if ($score > $best_score && $score >= 0.7) {
+            $best_score = $score;
+            $best_match = $html_file;
+        }
+    }
+    
+    return $best_match;
+}
+
+/**
+ * Normalize string for matching (remove accents, lowercase, remove special chars)
+ * 
+ * @param string $str String to normalize
+ * @return string Normalized string
+ */
+function normalize_for_matching($str) {
+    // Remove accents
+    $str = remove_diacritics($str);
+    
+    // Lowercase
+    $str = mb_strtolower($str, 'UTF-8');
+    
+    // Remove special characters, keep only alphanumeric and spaces
+    $str = preg_replace('/[^a-z0-9\s]/', '', $str);
+    
+    // Normalize whitespace
+    $str = preg_replace('/\s+/', ' ', trim($str));
+    
+    return $str;
+}
+
+/**
+ * Calculate similarity between two strings
+ * 
+ * @param string $str1 First string
+ * @param string $str2 Second string
+ * @return float Similarity score (0-1)
+ */
+function calculate_similarity($str1, $str2) {
+    if (empty($str1) || empty($str2)) {
+        return 0;
+    }
+    
+    // Use similar_text for percentage similarity
+    similar_text($str1, $str2, $percent);
+    
+    return $percent / 100;
 }
 
 /**

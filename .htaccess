@@ -1,5 +1,9 @@
 RewriteEngine On
 
+# Upload size limits for Mailchimp import
+php_value upload_max_filesize 25M
+php_value post_max_size 25M
+
 # Force HTTPS
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

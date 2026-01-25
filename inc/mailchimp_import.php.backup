@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * Mailchimp Import Logic
+ * 
+ * Handles one-time import of Mailchimp campaigns from a ZIP export.
+ * 
+ * Expected ZIP structure (Mailchimp exports are nested):
+ * - {numeric_id}/{list_id}/campaigns.csv (metadata)
+ * - {numeric_id}/{list_id}/campaigns_content/*.html (campaign HTML files)
+ * 
+ * Imported campaigns are stored in: /source/mailchimp_campaigns/{campaign_id}.html
+ */
+
+require_once __DIR__ . '/database.inc.php';
+require_once __DIR__ . '/functions.php';
+

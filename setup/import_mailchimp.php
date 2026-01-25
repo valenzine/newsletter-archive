@@ -18,12 +18,15 @@ if (!is_admin_authenticated()) {
     exit;
 }
 
+// Define destination directory for imported campaigns
+$mailchimp_campaigns_directory = dirname(__DIR__) . '/source/mailchimp_campaigns';
+
 // Check if this is a form submission
 $import_result = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['mailchimp_zip'])) {
     $import_result = process_mailchimp_import(
         $_FILES['mailchimp_zip'],
-        $campaigns_content_directory
+        $mailchimp_campaigns_directory
     );
 }
 
@@ -88,68 +91,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['mailchimp_zip'])) {
             <h2>Import Mailchimp Campaigns</h2>
             <p>This tool allows you to do a one-time import of your Mailchimp campaign archive. This is useful when migrating from Mailchimp to MailerLite.</p>
             
-            <h3>Prepare Your ZIP File</h3>
-            <p>Your ZIP file must contain:</p>
+            <h3>Step 1: Export Your Data from Mailchimp</h3>
+            <ol>
+                <li>Log in to your Mailchimp account</li>
+                <li>Navigate to <strong>Account → Settings → Manage my data</strong></li>
+                <li>Click <strong>"Export data"</strong></li>
+                <li>Under "Choose which data you'd like to export", select <strong>Emails</strong></li>
+                <li>Under "Date Limit", select <strong>All data</strong></li>
+                <li>Click the export button</li>
+                <li>Wait for Mailchimp to email you when the export is ready (could take a few minutes or up to 24 hs)</li>
+                <li>Download the ZIP file from the email link</li>
+            </ol>
+            
+            <h3>Step 2: Upload the ZIP File</h3>
+            <p>Upload the ZIP file you downloaded from Mailchimp. The file will contain:</p>
             <ul>
-                <li><strong>campaigns.csv</strong> - A CSV file with campaign metadata</li>
-                <li><strong>HTML files</strong> - Campaign HTML files referenced in the CSV</li>
+                <li><strong>campaigns.csv</strong> - Campaign metadata (Title, Subject, Send Date, etc.)</li>
+                <li><strong>campaigns_content/</strong> - Folder with HTML files for each campaign</li>
             </ul>
             
-            <h4>Required CSV Format</h4>
-            <p>The <code>campaigns.csv</code> file must have the following columns:</p>
-            <table class="format-table">
-                <thead>
-                    <tr>
-                        <th>Column</th>
-                        <th>Required</th>
-                        <th>Description</th>
-                        <th>Example</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>subject</code></td>
-                        <td>✓</td>
-                        <td>Email subject line</td>
-                        <td>Welcome to Our Newsletter</td>
-                    </tr>
-                    <tr>
-                        <td><code>sent_at</code></td>
-                        <td>✓</td>
-                        <td>Date sent (any parseable format)</td>
-                        <td>2024-01-15 10:30:00</td>
-                    </tr>
-                    <tr>
-                        <td><code>html_file</code></td>
-                        <td>✓</td>
-                        <td>Filename of HTML file in ZIP</td>
-                        <td>campaign_001.html</td>
-                    </tr>
-                    <tr>
-                        <td><code>name</code></td>
-                        <td></td>
-                        <td>Internal campaign name</td>
-                        <td>Welcome Series #1</td>
-                    </tr>
-                    <tr>
-                        <td><code>preview_text</code></td>
-                        <td></td>
-                        <td>Email preheader/preview text</td>
-                        <td>Get started with your account...</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <h4>Example CSV</h4>
-            <pre>name,subject,sent_at,html_file,preview_text
-"Welcome Campaign","Welcome to Our Newsletter","2024-01-15 10:30:00","campaign_001.html","Get started today"
-"Weekly Update #1","This Week's News","2024-01-22 09:00:00","campaign_002.html","See what's new"</pre>
+            <p><strong>Note:</strong> The import process will automatically match campaigns to HTML files. If some campaigns can't be matched, they'll be imported with metadata only (you can view them but they won't have content).</p>
             
             <h3>Notes</h3>
             <ul>
                 <li>Campaigns already in the database will be <strong>skipped</strong> (no duplicates)</li>
                 <li>Imported campaigns will have <code>source = 'mailchimp'</code> in the database</li>
-                <li>HTML files will be copied to <code><?= htmlspecialchars($campaigns_content_directory) ?></code></li>
+                <li>HTML files will be copied to <code>/source/mailchimp_campaigns/</code></li>
                 <li>After import, you can sync new campaigns from MailerLite via the <a href="mailerlite.php">MailerLite Sync</a> page</li>
             </ul>
         </div>

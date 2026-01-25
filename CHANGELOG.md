@@ -9,10 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Initial Release
 
+- IMPROVED: Complete rewrite of Mailchimp import to handle real export structure
+- IMPROVED: Mailchimp import now handles nested ZIP structure ({id}/{list_id}/campaigns.csv)
+- IMPROVED: Smart HTML file matching using subject/title similarity scoring
 - IMPROVED: Settings page UI with comprehensive form styling
 - IMPROVED: Visual hierarchy with section accent bars and better spacing
 - IMPROVED: Form inputs with focus states and hover effects
 - IMPROVED: Helper text styling with monospace code blocks
+- CHANGED: Mailchimp campaigns now stored in `/source/mailchimp_campaigns/` for clarity
+- CHANGED: Import uses actual Mailchimp CSV columns (Title, Subject, Send Date, Unique Id)
+- ADDED: Unmatched campaign handling - imports metadata even without HTML file
+- ADDED: Detailed import stats including unmatched campaign count and list
 - FIXED: Duplicate generate_campaign_id() function removed from mailchimp_import.php
 - FIXED: Mailchimp import updated to use generate_campaign_id() with source tracking
 - FIXED: Authentication function calls in mailerlite.php and import_mailchimp.php (was using undefined is_admin(), now uses is_admin_authenticated())
