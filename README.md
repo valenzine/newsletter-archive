@@ -1,230 +1,369 @@
 # Newsletter Archive
 
-A self-hosted, open-source email campaign archive for MailerLite users, with support for exported Mailchimp campaigns. Display your past newsletters in a beautiful, searchable interface.
+> A self-hosted platform to archive and display your email campaigns from MailerLite, with one-time import support for Mailchimp migrations.
 
-## Features
+Turn your newsletter archive into a beautiful, searchable website that you fully control. No third-party services, no monthly fees—just your campaigns, your way.
 
-- 📧 **MailerLite Integration** - Sync campaigns automatically via API
-- 📥 **Mailchimp Import** - One-time import from Mailchimp exports (for migrations)
-- 🔍 **Full-text Search** - SQLite FTS5 powered search across all campaigns
-- 🌍 **Internationalization** - Multi-language support (English included)
-- 📱 **Responsive Design** - Mobile-friendly inbox-style layout
-- 🔒 **Admin Interface** - HTTP Basic Auth protected admin dashboard
-- 🗄️ **SQLite Database** - No external database required
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](LICENSE)
+[![PHP Version](https://img.shields.io/badge/php-%5E8.3-blue)](https://www.php.net/)
 
-## Quick Start
+---
 
-### Requirements
+## ✨ Features
 
-- PHP 8.1+ with SQLite extension
-- Composer
-- Web server (Apache/Nginx) or PHP built-in server
+### Core Functionality
+- 📧 **Automatic MailerLite Sync** - Connect your MailerLite account and sync campaigns with one click
+- 📥 **Mailchimp Migration** - One-time import from Mailchimp ZIP exports for easy platform transitions
+- 🔍 **Smart Full-Text Search** - SQLite FTS5 with diacritic-insensitive matching and phrase search
+- 📱 **Responsive Design** - Inbox-style layout that works beautifully on mobile, tablet, and desktop
+- 🌐 **Clean URLs** - SEO-friendly routes like `/search/query` and `/{campaign-id}`
 
-### Installation
+### Admin Experience
+- 🔐 **Secure Admin Panel** - Database-backed authentication with rate limiting and remember-me tokens
+- ⚙️ **Easy Configuration** - Customize your site through the admin interface—no file editing required
+- 🎨 **Brand Control** - Set your site title, description, social images, and welcome page content
+- 🔄 **Cron Support** - Automated daily syncs via scheduled tasks
+- 🌍 **Internationalization** - Built-in English and Spanish (Argentina) translations
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/valenzine/newsletter-archive.git
-   cd newsletter-archive
-   ```
+### Technical Highlights
+- 🗄️ **SQLite Database** - Zero-configuration database, no MySQL/PostgreSQL needed
+- 🎯 **No Dependencies** - Self-contained with PHP's built-in server for development
+- 🔒 **Security First** - CSRF protection, rate limiting, secure sessions, and proper output escaping
+- 📊 **Developer Friendly** - Clean codebase with PHPDoc comments and logical architecture
 
-2. **Install dependencies:**
-   ```bash
-   composer install
-   ```
+---
 
-3. **Configure environment:**
-   ```bash
-   cp .env.example .env
-   nano .env
-   ```
+## 📋 Requirements
 
-   Required settings:
-   ```env
-   SITE_NAME="My Newsletter Archive"
-   SITE_DESCRIPTION="Archive of past campaigns"
-   SITE_BASE_URL=https://yourdomain.com
-   MAILERLITE_API_KEY=your-api-key-here
-   LOCALE=en
-   ```
+- **PHP 8.3+** with SQLite extension enabled
+- **Composer** for dependency management
+- **Web server** (Apache, Nginx) or PHP's built-in server for development
 
-4. **Set up admin authentication:**
-   ```bash
-   # Create admin password for /setup/ directory
-   htpasswd -c setup/.htpasswd admin
-   ```
+---
 
-5. **Start the server:**
-   ```bash
-   # Development
-   php -S localhost:8182 router.php
-   
-   # Production: Configure Apache/Nginx to serve the directory
-   ```
+## 🚀 Installation
 
-6. **Sync your campaigns:**
-   - Navigate to `http://localhost:8182/setup/setup.php`
-   - Click "Sync MailerLite" to import your campaigns
-
-### First-Time Setup
-
-**Option A: Fresh Start (MailerLite only)**
-1. Add your MailerLite API key to `.env`
-2. Access admin dashboard
-3. Click "Sync MailerLite"
-
-**Option B: Migrate from Mailchimp**
-1. Export your campaigns from Mailchimp (as ZIP with HTML files)
-2. Place `campaigns.csv` in `/source/`
-3. Place HTML files in `/source/campaigns_content/`
-4. Access admin dashboard
-5. Click "Import Mailchimp"
-6. Add MailerLite API key and sync future campaigns
-
-## Project Structure
-
-```
-newsletter-archive/
-├── api/              # JSON API endpoints
-├── css/              # SCSS source files
-├── db/               # SQLite database (auto-created)
-├── inc/              # PHP includes (bootstrap, database, i18n)
-├── js/               # JavaScript application files
-├── lang/             # Translation files
-├── setup/            # Admin interface (HTTP Auth protected)
-├── source/           # Campaign content storage
-│   ├── mailchimp_campaigns/     # Mailchimp HTML files
-│   └── mailerlite_campaigns/  # MailerLite HTML files
-├── index.php         # Main archive page
-├── search.php        # Search interface
-└── view_campaign.php # Single campaign view
-```
-
-## Configuration
-
-### Hybrid Configuration System
-
-Configuration uses a **hybrid approach** for flexibility:
-
-1. **`.env` file** - Deployment-specific settings (API keys, URLs, environment type)
-2. **Database settings** - User-customizable settings (site title, social images, welcome text)
-3. **Admin UI** - Edit database settings via `/setup/settings.php`
-
-**Database settings override `.env` values when set.** This allows:
-- Static configuration in `.env` for deployment
-- Dynamic customization via admin interface without editing files
-- Easy version control of defaults (`.env.example`)
-
-### Environment Variables (.env)
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `SITE_NAME` | Site title | "Newsletter Archive" |
-| `SITE_TITLE` | Page title (og:title) | Same as SITE_NAME |
-| `SITE_DESCRIPTION` | Meta description | "Archive of past email campaigns" |
-| `SITE_BASE_URL` | Full site URL | - |
-| `OG_IMAGE` | Social sharing image | /img/share.jpg |
-| `TWITTER_SITE` | Twitter handle (site) | - |
-| `TWITTER_CREATOR` | Twitter handle (creator) | - |
-| `MAILERLITE_API_KEY` | MailerLite API key | - |
-| `LOCALE` | Language (en, es, etc.) | en |
-| `APP_ENV` | development or production | production |
-| `TIMEZONE` | Timezone for dates | UTC |
-
-**Note:** Values in `.env` are defaults. Override them via `/setup/settings.php` without editing files.
-
-### Admin Customization
-
-After first-time setup, visit `/setup/settings.php` to customize:
-
-- Site title and description
-- Social sharing image (Open Graph)
-- Twitter handles for attribution
-- Welcome page content and buttons
-
-**All settings can be edited via the admin interface** - no need to touch config files!
-
-## Customization
-
-### Adding Translations
-
-1. Create `/lang/your_locale.php` based on `/lang/en.php`
-2. Translate all strings
-3. Set `LOCALE=your_locale` in `.env`
-
-### Branding & Images
-
-Replace the default placeholder images with your own:
-
-- **Social sharing image**: `/img/share.jpg` (1200x630px recommended)
-  - Upload your image to `/img/share.jpg` OR
-  - Set custom path in admin settings (`/setup/settings.php`)
-  - Can be relative path or full URL
-
-- **Favicon**: Replace files in `/img/`:
-  - `favicon.ico` (32x32px)
-  - `favicon-16x16.png` and `favicon-32x32.png`
-  - `apple-touch-icon.png` (180x180px)
-  - `android-chrome-192x192.png` and `android-chrome-512x512.png`
-
-### Styling
-
-Styles are in SCSS format in `/css/` directory:
-- `styles.scss` - Main site styles
-- `admin.scss` - Admin interface styles
-
-Compile with:
-```bash
-npm install
-npm run sass:all
-```
-
-## Development
-
-### Testing with Sample Data
+### 1. Get the Code
 
 ```bash
-# Import test data (uses existing /source/ files)
-php setup/import_test_data.php
+git clone https://github.com/valenzine/newsletter-archive.git
+cd newsletter-archive
+composer install
+```
 
-# Start development server
+### 2. Configure Your Environment
+
+```bash
+cp .env.example .env
+nano .env  # or use your preferred editor
+```
+
+**Minimum required settings:**
+
+```env
+SITE_BASE_URL=http://localhost:8182
+MAILERLITE_API_KEY=your_api_key_here
+```
+
+Get your MailerLite API key from: [MailerLite → Settings → Integrations → API](https://dashboard.mailerlite.com/integrations/api)
+
+### 3. Start the Application
+
+**Development:**
+```bash
 php -S localhost:8182 router.php
 ```
 
+**Production:** Configure your web server to serve the project directory with `router.php` as the entry point.
+
+### 4. Complete First-Time Setup
+
+1. Visit `http://localhost:8182`
+2. Follow the setup wizard to create your admin account
+3. Customize your site in **Settings**
+4. Sync your campaigns in **Dashboard**
+
+That's it! Your newsletter archive is live.
+
+---
+
+## 📖 Usage
+
+### Syncing Campaigns
+
+**Automatic Sync:**
+1. Go to `/setup/setup.php` (admin dashboard)
+2. Click **"Sync MailerLite Campaigns"**
+3. Watch the progress as campaigns are imported
+
+**Automated Daily Sync (Cron):**
+1. Generate a secure cron token in **Settings**
+2. Add this to your crontab:
+   ```bash
+   0 2 * * * curl -s "https://yourdomain.com/setup/mailerlite.php?token=YOUR_TOKEN&json=1" > /dev/null
+   ```
+
+### Migrating from Mailchimp
+
+If you're switching from Mailchimp to MailerLite:
+
+1. **Export from Mailchimp:**
+   - Go to Account → Settings → Manage my data
+   - Click "Export data" → Select "Emails" → Download ZIP
+
+2. **Import via Admin:**
+   - Go to `/setup/import_mailchimp.php`
+   - Upload the ZIP file
+   - Review import results
+
+3. **Future campaigns sync automatically** from MailerLite
+
+### Customizing Your Site
+
+Visit `/setup/settings.php` to configure:
+- Site title and description
+- Social sharing image (Open Graph)
+- Twitter attribution
+- Welcome page content
+- Language preference
+
+---
+
+## ⚙️ Configuration
+
+### Hybrid Configuration System
+
+This project uses a **flexible two-tier configuration**:
+
+1. **`.env` file** → Deployment settings (API keys, base URL)
+2. **Database settings** → User-facing customization (site title, images, content)
+
+Database values override `.env` defaults. This means:
+- ✅ Version control your `.env.example` with sensible defaults
+- ✅ Customize branding via admin UI without touching files
+- ✅ Different environments share the same codebase
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SITE_BASE_URL` | Yes | Full URL to your site (no trailing slash) |
+| `MAILERLITE_API_KEY` | Yes | Your MailerLite API key |
+| `SITE_NAME` | No | Default site name |
+| `SITE_DESCRIPTION` | No | Default meta description |
+| `LOCALE` | No | Language code (`en`, `es`) |
+| `APP_ENV` | No | `development` or `production` |
+| `TIMEZONE` | No | PHP timezone identifier |
+
+**All of these can be overridden** in `/setup/settings.php` except `SITE_BASE_URL` and `MAILERLITE_API_KEY`.
+
+---
+
+## 🎨 Customization
+
+### Translations
+
+Add new languages:
+
+1. Copy [lang/en.php](lang/en.php) to `lang/your_locale.php`
+2. Translate all strings
+3. Set locale in admin settings or `.env`
+
+Included languages: English (`en`), Spanish Argentina (`es`)
+
+### Branding & Images
+
+**Social sharing image** (1200×630px recommended):
+- Upload to `/img/share.jpg`, or
+- Set custom URL in admin settings
+
+**Favicons** - Replace in `/img/`:
+- `favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`
+- `apple-touch-icon.png` (180×180px)
+- `android-chrome-192x192.png`, `android-chrome-512x512.png`
+
+### Styling
+
+Compile SCSS to CSS:
+
+```bash
+npm install
+npm run sass        # Compile main styles
+npm run sass:admin  # Compile admin styles
+npm run sass:all    # Compile both
+```
+
+Source files: [css/styles.scss](css/styles.scss), [css/admin.scss](css/admin.scss)
+
+---
+
+## 🏗️ Project Structure
+
+```
+newsletter-archive/
+├── api/                      # JSON API endpoints
+│   ├── campaigns.php         # List campaigns (paginated)
+│   ├── campaign.php          # Single campaign
+│   └── search.php            # Full-text search
+├── css/                      # SCSS source files
+├── db/                       # SQLite database (auto-created)
+├── inc/                      # PHP core
+│   ├── bootstrap.php         # Config loader
+│   ├── database.inc.php      # Database layer
+│   ├── functions.php         # Helper functions
+│   ├── i18n.php              # Translation system
+│   └── schema.sql            # Database schema
+├── js/                       # JavaScript
+│   ├── main.js               # Archive SPA
+│   └── search.js             # Search interface
+├── lang/                     # Translation files
+├── setup/                    # Admin interface
+│   ├── setup.php             # Dashboard
+│   ├── settings.php          # Configuration
+│   ├── mailerlite.php        # Sync tool
+│   └── import_mailchimp.php  # Import tool
+├── source/                   # Campaign storage
+│   ├── mailchimp_campaigns/  # Mailchimp HTML
+│   └── mailerlite_campaigns/ # MailerLite HTML
+├── index.php                 # Public archive
+├── search.php                # Search page
+├── router.php                # URL routing
+└── .env                      # Environment config (gitignored)
+```
+
+---
+
+## 🔌 API Reference
+
+### List Campaigns
+
+```http
+GET /api/campaigns.php?page=1&limit=20&sort=desc
+```
+
+**Parameters:**
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
+- `sort` - Sort order: `asc` or `desc` (default: `desc`)
+- `search` - Search term (optional)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 150,
+    "totalPages": 8
+  }
+}
+```
+
+### Search Campaigns
+
+```http
+GET /api/search.php?q=newsletter&from=2025-01-01&to=2025-12-31
+```
+
+**Parameters:**
+- `q` - Search query (supports phrase search with quotes)
+- `from`, `to` - Date range filters (YYYY-MM-DD)
+- `page`, `per_page` - Pagination
+- `sort` - `relevance`, `date_desc`, or `date_asc`
+
+**Response:**
+```json
+{
+  "success": true,
+  "total": 42,
+  "results": [
+    {
+      "id": "abc123...",
+      "subject": "Weekly Newsletter #42",
+      "excerpt": "...matching <mark>newsletter</mark> content...",
+      "sent_at": "2025-06-15 10:00:00",
+      "url": "/view_campaign.php?id=abc123..."
+    }
+  ]
+}
+```
+
+---
+
+## 🛠️ Development
+
+### Local Development
+
+```bash
+# Clone and install
+git clone https://github.com/valenzine/newsletter-archive.git
+cd newsletter-archive
+composer install
+
+# Configure
+cp .env.example .env
+# Edit .env and set APP_ENV=development
+
+# Start server
+php -S localhost:8182 router.php
+```
+
+Visit `http://localhost:8182` to begin setup.
+
 ### Database
 
-SQLite database location: `/db/archive.sqlite`
+- **Location:** `db/archive.sqlite`
+- **Schema:** Auto-created on first run
+- **Source:** [inc/schema.sql](inc/schema.sql)
+- **Migrations:** Not needed for v0.1.0 (first release)
 
-Schema is auto-created on first run. See `/inc/schema.sql` for structure.
+### Building CSS
 
-## API Endpoints
+Watch mode for development:
+```bash
+npm run sass:watch        # Main styles
+npm run sass:watch:admin  # Admin styles
+```
 
-- `GET /api/campaigns.php` - List campaigns (paginated)
-  - `?page=1` - Page number
-  - `?limit=20` - Results per page
-  - `?sort=asc|desc` - Sort order
+---
 
-- `GET /api/campaign.php?id=ID` - Get single campaign
+## 📄 License
 
-- `GET /api/search.php` - Search campaigns
-  - `?q=query` - Search term
-  - `?from=YYYY-MM-DD` - Date filter
-  - `?to=YYYY-MM-DD` - Date filter
+This project is licensed under the **Mozilla Public License 2.0**. See [LICENSE](LICENSE) for details.
 
-## License
+---
 
-[Mozilla Public License 2.0](LICENSE)
+## 🙏 Acknowledgements
 
-## Acknowledgements
+- [MailerLite PHP SDK](https://github.com/mailerlite/mailerlite-php) - Official API client
+- [Flaticon](https://www.flaticon.com/free-icons/box) - Box icon by Maxim Basinski
 
-- [Box icons](https://www.flaticon.com/free-icons/box) created by Maxim Basinski on Flaticon.
+---
 
-## Contributing
+## 🤝 Contributing
 
-Contributions welcome! Please open an issue or pull request.
+Contributions are welcome! Please feel free to submit issues or pull requests.
 
-## Support
+### Guidelines
 
-For issues and questions, please use the [GitHub issue tracker](https://github.com/valenzine/newsletter-archive/issues).
+1. Follow existing code style (PSR-12 for PHP)
+2. Add PHPDoc comments for new functions
+3. Test on PHP 8.3+
+4. Update CHANGELOG.md with your changes
 
-**Important:** The `.env` file must exist on production but should NEVER be committed to git.
+---
+
+## 💬 Support
+
+- **Issues:** [GitHub Issue Tracker](https://github.com/valenzine/newsletter-archive/issues)
+- **Discussions:** Use GitHub Discussions for questions and ideas
+
+---
+
+## 🔐 Security Note
+
+**Never commit `.env` to version control!** It contains sensitive API keys. The `.env.example` file is provided as a template.
