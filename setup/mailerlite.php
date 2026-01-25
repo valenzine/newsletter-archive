@@ -1,0 +1,374 @@
+<?php
+/**
+ * MailerLite Campaign Sync Interface
+ * 
+ * Simple, standalone sync interface for newsletter-archive.
+ * Uses real-time Server-Sent Events (SSE) for progress updates.
+ */
+
+require_once __DIR__.'/../inc/bootstrap.php';
+require_once __DIR__.'/../inc/session.inc.php';
+require_once __DIR__.'/../inc/functions.php';
+require_once __DIR__.'/../inc/database.inc.php';
+require_once __DIR__.'/../inc/admin_auth.php';
+
+if (!is_admin_authenticated()) {
+    http_response_code(403);
+    echo "<h1>403 Forbidden</h1><p>You are not authorized to access this page.</p>";
+    exit;
+}
+
+// Get admin user info
+$admin_user = $_SESSION['user'] ?? null;
+$admin_name = $admin_user['name'] ?? $admin_user['username'] ?? $admin_user['email'] ?? 'Admin';
+
+// Handle AJAX sync request
+if (isset($_GET['action']) && $_GET['action'] === 'sync' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Configure for real-time streaming
+    @ini_set('output_buffering', '0');
+    @ini_set('zlib.output_compression', '0');
+    @ini_set('implicit_flush', '1');
+    
+    // Clean existing buffers
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    
+    // Start output buffering for flush control
+    ob_start();
+    
+    // Disable FastCGI buffering
+    if (function_exists('apache_setenv')) {
+        @apache_setenv('no-gzip', '1');
+    }
+    
+    header('Content-Type: text/event-stream');
+    header('Cache-Control: no-cache');
+    header('X-Accel-Buffering: no');
+    
+    // Send initial padding to prevent buffering
+    echo ":" . str_repeat(' ', 1024) . "\n\n";
+    ob_flush();
+    flush();
+    
+    // TEST: Send a hardcoded message first
+    send_sse_event('TEST: SSE stream is working!', 'info');
+    sleep(1); // Give it time to show
+    
+    send_sse_event('Starting MailerLite sync...', 'info');
+    
+    // Get force sync limit from POST data
+    $force_limit = null;
+    if (isset($_POST['force_limit']) && is_numeric($_POST['force_limit'])) {
+        $force_limit = (int)$_POST['force_limit'];
+        send_sse_event("Force sync mode: Will sync up to $force_limit campaigns", 'warning');
+    } else {
+        send_sse_event('Normal sync mode: Will sync ALL campaigns', 'info');
+    }
+    
+    // Get API key
+    $api_key = $mailerlite_api_key ?? '';
+    if (empty($api_key)) {
+        send_sse_event('ERROR: MailerLite API key not configured', 'error');
+        send_sse_event('complete', 'complete');
+        ob_end_flush();
+        exit;
+    }
+    
+    // Create progress callback
+    $progress_callback = function($data) {
+        $message = $data['message'] ?? '';
+        $type = $data['type'] ?? 'info';
+        if (!empty($message)) {
+            send_sse_event($message, $type === 'progress' ? 'info' : $type);
+        }
+    };
+    
+    // Run sync
+    try {
+        $result = sync_mailerlite_campaigns($api_key, $force_limit, $progress_callback);
+        
+        $imported = $result['imported'] ?? 0;
+        $skipped = $result['skipped'] ?? 0;
+        $errors = $result['errors'] ?? [];
+        
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                send_sse_event("Error: $error", 'error');
+            }
+        }
+        
+        if ($imported > 0 || $skipped > 0) {
+            send_sse_event("✓ Sync complete: {$imported} imported, {$skipped} skipped", 'success');
+        } else {
+            send_sse_event("✓ Sync complete: No campaigns found", 'info');
+        }
+        
+        // Send completion event with stats
+        echo "data: " . json_encode([
+            'type' => 'complete',
+            'stats' => [
+                'imported' => $imported,
+                'skipped' => $skipped,
+                'errors' => count($errors),
+            ]
+        ]) . "\n\n";
+        
+    } catch (Exception $e) {
+        send_sse_event("Fatal error: " . $e->getMessage(), 'error');
+        echo "data: " . json_encode([
+            'type' => 'complete',
+            'stats' => [
+                'imported' => 0,
+                'skipped' => 0,
+                'errors' => 1,
+            ]
+        ]) . "\n\n";
+    }
+    
+    ob_end_flush();
+    exit;
+}
+
+// Main page HTML
+$last_sync = get_setting('last_sync', 'Never');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailerLite Sync | <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
+    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
+    <style>
+        .sync-controls {
+            margin: 2rem 0;
+        }
+        .progress-log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 500px;
+            overflow-y: auto;
+            margin: 1rem 0;
+        }
+        .progress-log .log-entry {
+            padding: 0.25rem 0;
+            border-left: 3px solid transparent;
+            padding-left: 0.5rem;
+        }
+        .progress-log .log-entry.info {
+            border-left-color: #4a9eff;
+        }
+        .progress-log .log-entry.success {
+            border-left-color: #4ec9b0;
+            font-weight: 600;
+        }
+        .progress-log .log-entry.error {
+            border-left-color: #f48771;
+            color: #f48771;
+        }
+        .progress-log .log-entry.warning {
+            border-left-color: #ce9178;
+            color: #ce9178;
+        }
+        .btn-sync {
+            background: #0066cc;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-sync:hover:not(:disabled) {
+            background: #0052a3;
+        }
+        .btn-sync:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .stat-card {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #0066cc;
+        }
+        .stat-card .label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body class="admin-page">
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <h1>MailerLite Sync</h1>
+            <div class="admin-user-info">
+                <span>Logged in as: <strong><?= htmlspecialchars($admin_name) ?></strong></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-content">
+            <div class="result-box">
+                <h2>Sync Campaigns from MailerLite</h2>
+                <p>This will fetch campaigns from your MailerLite account and save them to the archive.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">Last Sync</div>
+                        <div class="value"><?= htmlspecialchars($last_sync) ?></div>
+                    </div>
+                </div>
+
+                <div class="sync-controls">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="force-sync-checkbox" />
+                            <span>Force sync (limit to specific number of campaigns)</span>
+                        </label>
+                    </div>
+                    
+                    <div id="force-limit-container" style="display: none; margin-bottom: 1rem;">
+                        <label for="force-limit">Number of campaigns to sync:</label>
+                        <input type="number" id="force-limit" min="1" max="500" value="50" style="margin-left: 0.5rem; padding: 8px; width: 100px;" />
+                        <small style="display: block; margin-top: 0.5rem; color: #666;">
+                            Useful for testing or re-syncing recent campaigns
+                        </small>
+                    </div>
+                    
+                    <button id="sync-btn" class="btn-sync">Start Sync</button>
+                </div>
+
+                <div id="progress-log" class="progress-log" style="display: none;"></div>
+            </div>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="setup.php" class="btn">← Back to Admin</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const syncBtn = document.getElementById('sync-btn');
+        const progressLog = document.getElementById('progress-log');
+        const forceSyncCheckbox = document.getElementById('force-sync-checkbox');
+        const forceLimitContainer = document.getElementById('force-limit-container');
+        const forceLimitInput = document.getElementById('force-limit');
+
+        // Toggle force limit input
+        forceSyncCheckbox.addEventListener('change', () => {
+            forceLimitContainer.style.display = forceSyncCheckbox.checked ? 'block' : 'none';
+        });
+
+        syncBtn.addEventListener('click', startSync);
+
+        function startSync() {
+            syncBtn.disabled = true;
+            syncBtn.textContent = 'Syncing...';
+            progressLog.style.display = 'block';
+            progressLog.innerHTML = '';
+
+            // Build form data for force sync
+            const formData = new FormData();
+            if (forceSyncCheckbox.checked) {
+                formData.append('force_limit', forceLimitInput.value);
+            }
+
+            // Use fetch with streaming for Server-Sent Events
+            fetch('?action=sync', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'text/event-stream',
+                },
+            }).then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                function processText({ done, value }) {
+                    if (done) {
+                        syncBtn.disabled = false;
+                        syncBtn.textContent = 'Start Sync';
+                        addLog('Stream ended', 'info');
+                        return;
+                    }
+
+                    buffer += decoder.decode(value, { stream: true });
+     // DEBUG
+                    
+                    const lines = buffer.split('\n\n');
+                    buffer = lines.pop(); // Keep incomplete message in buffer
+
+                    lines.forEach(block => {
+                        // Each block can contain multiple lines (event:, data:, etc.)
+                        const eventLines = block.split('\n');
+                        let eventData = null;
+                        
+                        eventLines.forEach(line => {
+                            if (line.startsWith('data: ')) {
+                                const data = line.substring(6);
+                                try {
+                                    eventData = JSON.parse(data);
+                                } catch (e) {
+                                    console.error('Failed to parse SSE data:', data, e);
+                                    addLog('Parse error: ' + e.message, 'error');
+                                }
+                            }
+                        });
+                        
+                        // Process the parsed event
+                        if (eventData) {
+                            if (eventData.type === 'complete') {
+                                syncBtn.disabled = false;
+                                syncBtn.textContent = 'Start Sync';
+                                addLog('✅ Sync complete!', 'success');
+                            } else if (eventData.message) {
+                                addLog(eventData.message, eventData.type || 'info');
+                            }
+                        }
+                    });
+
+                    return reader.read().then(processText);
+                }
+
+                return reader.read().then(processText);
+            }).catch(error => {
+                syncBtn.disabled = false;
+                syncBtn.textContent = 'Start Sync';
+                addLog('❌ Error: ' + error.message, 'error');
+            });
+        }
+
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = message;
+            progressLog.appendChild(entry);
+            progressLog.scrollTop = progressLog.scrollHeight;
+        }
+    </script>
+</body>
+</html>

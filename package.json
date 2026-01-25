@@ -1,0 +1,16 @@
+{
+  "name": "newsletter-archive",
+  "version": "0.1.0",
+  "description": "Self-hosted email campaign archive for MailerLite users",
+  "license": "MPL-2.0",
+  "scripts": {
+    "sass": "sass css/styles.scss css/styles.css --no-source-map --style=compressed --silence-deprecation=import",
+    "sass:admin": "sass css/admin.scss css/admin.css --no-source-map --style=compressed --silence-deprecation=import",
+    "sass:watch": "sass css/styles.scss css/styles.css --watch --style=expanded --silence-deprecation=import",
+    "sass:watch:admin": "sass css/admin.scss css/admin.css --watch --style=expanded --silence-deprecation=import",
+    "sass:all": "npm run sass && npm run sass:admin"
+  },
+  "dependencies": {
+    "sass": "^1.94.2"
+  }
+}

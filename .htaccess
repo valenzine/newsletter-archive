@@ -1,0 +1,25 @@
+RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Security: Block direct access to database and source directories
+RedirectMatch 403 /db/.+/.*$
+RedirectMatch 403 /source/.+/.*$
+
+# Clean URL Routing
+# Skip routing for existing files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Skip routing for specific paths that should be handled directly
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_URI} !^/setup/
+RewriteCond %{REQUEST_URI} !^/css/
+RewriteCond %{REQUEST_URI} !^/js/
+RewriteCond %{REQUEST_URI} !^/img/
+RewriteCond %{REQUEST_URI} !^/source/
+
+# Route everything else through router.php
+RewriteRule ^(.*)$ router.php [QSA,L]

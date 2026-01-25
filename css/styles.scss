@@ -1,0 +1,2299 @@
+// Import mixins
+@use 'mixins' as *;
+
+// =========================
+// 1. Variables
+$color-tag-club: #3CA69B;
+$color-tag-cflc: #84BFB9;
+$color-tag-extras: #8f829e;
+$color-tag-qpql: #F2996F;
+$color-tag-misc: #795e7f;
+$color-tag-question: #BAB9A0;
+$color-tag-etc: #a695d1;
+$color-tag-quotes: #661F4C;
+
+$color-tag-dbrc19: #B07D74;
+$color-tag-dbrc22: #70504A;
+$color-tag-dcor20: #999845;
+$color-tag-dmx22: #B58AE5;
+$color-tag-df: #E67D50;
+$color-tag-book: #ed7a7a;
+$color-tag-txt: #6675AA;
+$color-tag-index: #e2e1e1;
+$color-tag-bis: #EFEFEF;
+$color-tag-index2: #d6e8d7;
+$color-tag-vip-bg: #fbfbff;
+$color-tag-metadata-bg: #fdf7f7;
+$color-white: #FFF;
+$color-black: #000;
+$color-light-grey: #666;
+$color-vip: #d2d8f8;
+$color-email-hover: #F9F9F9;
+$color-email-active: #eaeaea;
+$color-email-border: #8f8f8f;
+$color-email-bottom: #f5f4f4;
+$font-serif: 'Lora', serif;
+$font-sans: 'Open Sans', sans-serif;
+$color-main: #006669;
+$color-accent: #2d7d74;
+$color-grey: #999;
+$color-blue: #447BA6;
+
+// Semantic colors
+$color-border: #CCC;
+$color-filter-bg: #f0f0f0;
+$color-btn-default: #e9e9e9;
+$color-btn-default-text: #3c3c3c;
+$color-btn-active: #cfcfcf;
+$color-btn-active-text: #000;
+$color-tag-default: #CCC;
+$color-highlight-flash: #fffbcc;
+
+// =========================
+// 1.1 Mixins
+@mixin button-base {
+  font-family: $font-sans;
+  border-radius: 4px;
+  padding: 4px 8px;
+  border: none;
+  background: $color-btn-default;
+  color: $color-btn-default-text;
+  margin: 2px;
+  float: left;
+  font-size: 9px;
+  line-height: 150%;
+  text-transform: uppercase;
+  z-index: 10;
+  position: relative;
+  cursor: pointer;
+
+  &.active {
+    background: $color-btn-active;
+    color: $color-btn-active-text;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+@mixin tag-colors {
+
+  &.tag-club,
+  &.active.btn-club,
+  &.active.btn-vip {
+    background: $color-tag-club;
+    color: #FFF;
+  }
+
+  &.tag-cflc,
+  &.active.btn-cflc {
+    background: $color-tag-cflc;
+    color: #FFF;
+  }
+
+  &.tag-extras,
+  &.active.btn-extras {
+    background: $color-tag-extras;
+    color: #FFF;
+  }
+
+  &.tag-qpql,
+  &.active.btn-qpql {
+    background: $color-tag-qpql;
+    color: #FFF;
+  }
+
+  &.tag-misc,
+  &.active.btn-misc {
+    background: $color-tag-misc;
+    color: #FFF;
+  }
+
+  &.tag-question,
+  &.active.btn-question {
+    background: $color-tag-question;
+    color: #FFF;
+  }
+
+  &.tag-etc,
+  &.active.btn-etc {
+    background: $color-tag-etc;
+    color: #FFF;
+  }
+
+  &.tag-quotes,
+  &.active.btn-quotes {
+    background: $color-tag-quotes;
+    color: #FFF;
+  }
+
+  &.tag-dbrc19,
+  &.active.btn-dbrc19 {
+    background: $color-tag-dbrc19;
+    color: #FFF;
+  }
+
+  &.tag-dbrc22,
+  &.active.btn-dbrc22 {
+    background: $color-tag-dbrc22;
+    color: #FFF;
+  }
+
+  &.tag-dcor20,
+  &.active.btn-dcor20 {
+    background: $color-tag-dcor20;
+    color: #FFF;
+  }
+
+  &.tag-dmx22,
+  &.active.btn-dmx22 {
+    background: $color-tag-dmx22;
+    color: #FFF;
+  }
+
+  &.tag-df,
+  &.active.btn-df {
+    background: $color-tag-df;
+    color: #FFF;
+  }
+
+  &.tag-book,
+  &.active.btn-book {
+    background: $color-tag-book;
+    color: #FFF;
+  }
+
+  &.tag-txt,
+  &.active.btn-txt {
+    background: $color-tag-txt;
+    color: #fff;
+  }
+}
+
+// =========================
+// 2. Base/Reset/Inherited Styles
+* {
+  box-sizing: border-box;
+}
+
+#templatePreheader,
+body,
+html {
+  background: #FFF !important;
+}
+
+body {
+  line-height: 150%;
+  margin: 0;
+  padding-top: 0;
+  font-family: $font-serif;
+  overflow-x: hidden;
+
+  &.page-login {
+    background: #f9f9f9 !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: $font-sans;
+  }
+
+  a {
+    color: $color-main;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  blockquote {
+    font-style: italic;
+    // text-align: center;
+  }
+}
+
+section {
+  &.contents {
+    ul b {
+      font-family: sans-serif;
+    }
+  }
+}
+
+// =========================
+// 3. Layout/Structure
+#filter-box {
+  position: sticky !important;
+  top: 0;
+  z-index: 100;
+  background: $color-white !important;
+  border-bottom: 2px solid $color-filter-bg;
+  padding: 0;
+
+  #header-title {
+    padding: 15px 20px 10px;
+    
+    h1 {
+      font-family: $font-sans;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  #home-button-container {
+    padding: 12px 20px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    gap: 8px;
+
+    .btn-home,
+    .btn-search {
+      @include button-base;
+      background: transparent;
+      border: none;
+      color: $color-grey;
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      margin: 0;
+      letter-spacing: 0.5px;
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+
+      &:hover {
+        background: $color-filter-bg;
+        color: $color-main;
+      }
+    }
+
+    .btn-search {
+      color: #fff;
+      background: #b3b3b3;
+
+      &:hover {
+        color: #fff;
+        background: #969696;
+      }
+    }
+  }
+
+  #filters {
+    padding: 15px 20px;
+
+    // Main action buttons (always visible)
+    .btn-all,
+    .btn-vip {
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    // Tag filters container - collapsible
+    #tag-filters {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      margin-top: 8px;
+
+      &.expanded {
+        max-height: 500px;
+      }
+
+      .btn {
+        margin: 3px;
+      }
+    }
+
+    // Toggle button for filters
+    .filter-toggle {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 8px 12px;
+      margin: 8px 0;
+      background: transparent;
+      border: 1px dashed $color-border;
+      border-radius: 4px;
+      color: $color-grey;
+      font-family: $font-sans;
+      font-size: 11px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $color-filter-bg;
+        border-style: solid;
+      }
+
+      &::after {
+        content: '▼';
+        float: right;
+        font-size: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      &.expanded::after {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+// =========================
+// 4. Components
+.box {
+  margin: 0 auto;
+  width: 360px;
+  max-width: 90%;
+  font-family: $font-sans;
+
+  &-inner {
+    max-width: 448px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: rgba(60, 66, 87, 0.12) 0 7px 14px 0px, rgba(0, 0, 0, 0.12) 0 3px 6px 0;
+    padding: 20px;
+    margin: auto;
+    text-align: center;
+
+    .button {
+      padding: 8px;
+      width: 100%;
+      margin: 20px 0 10px;
+      display: block;
+      text-align: center;
+      border-radius: 5px;
+
+      &.button-secondary {
+        background: transparent;
+        color: $color-blue;
+        border: 2px solid $color-blue;
+        margin-top: 10px;
+
+        &:hover {
+          background: $color-blue;
+          color: white;
+        }
+      }
+    }
+  }
+
+  label {
+    display: block;
+    margin: 10px 0;
+  }
+}
+
+.message {
+  border: 1px dashed $color-border;
+  text-align: center;
+  padding: 20px;
+  font-size: 80%;
+  width: 80%;
+  margin: auto;
+  color: $color-main;
+}
+
+.field {
+  padding-bottom: 24px;
+
+  input {
+    font-size: 16px;
+    line-height: 28px;
+    padding: 8px 16px;
+    width: 100%;
+    min-height: 44px;
+    border: unset;
+    border-radius: 4px;
+    outline-color: rgb(84 105 212 / 0.5);
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0) 0 0 0 0px, rgba(0, 0, 0, 0) 0 0 0 0px, rgba(0, 0, 0, 0) 0 0 0 0px, rgba(60, 66, 87, 0.16) 0 0 0 1px, rgba(0, 0, 0, 0) 0 0 0 0px, rgba(0, 0, 0, 0) 0 0 0 0px, rgba(0, 0, 0, 0) 0 0 0 0;
+  }
+}
+
+.button,
+input[type="submit"] {
+  background-color: $color-blue;
+  color: #fff;
+  font-weight: 400;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.field-checkbox {
+  input {
+    width: 20px;
+    height: 15px;
+    margin-right: 5px;
+    box-shadow: unset;
+    min-height: unset;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+}
+
+footer {
+  hr {
+    border: none;
+    border-top: 1px solid $color-border;
+    margin: 0 auto 20px;
+    width: 200px;
+  }
+}
+
+.credits {
+  text-align: center;
+  margin: 20px 0 40px;
+  padding: 0 10px;
+  font-size: 70%;
+  color: $color-grey;
+}
+
+.join {
+  text-align: center;
+  margin: 40px 0;
+  padding: 0 10px;
+  font-size: 70%;
+  color: $color-main;
+
+  a {
+    font-weight: bold;
+    color: $color-accent;
+  }
+}
+
+.btn-unsubs,
+.btn-upscribe {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+// Admin/Setup utility classes
+.progress-log {
+  font-family: monospace;
+  background: #f0f0f0;
+  padding: 1rem;
+  border-radius: 4px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.stats-grid {
+  margin-top: 1.5rem;
+}
+
+.alert {
+  margin-top: 1.5rem;
+
+  &.alert-error {
+    ul {
+      margin: 0.5rem 0;
+      padding-left: 1.5rem;
+    }
+  }
+}
+
+.info-box,
+.cron-info {
+  margin-top: 2rem;
+
+  code {
+    display: block;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: monospace;
+
+    &.blurred {
+      filter: blur(5px);
+      cursor: pointer;
+
+      &:hover {
+        filter: blur(3px);
+      }
+    }
+  }
+}
+
+.force-input-group {
+  margin-left: 2rem;
+}
+
+// Loading spinner
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: $color-accent;
+  animation: spin 0.8s linear infinite;
+
+  &.loading-large {
+    width: 40px;
+    height: 40px;
+    border-width: 4px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+
+  .loading-message {
+    text-align: center;
+    color: $color-grey;
+    font-family: $font-sans;
+    font-size: 14px;
+
+    .loading {
+      display: block;
+      margin: 0 auto 10px;
+    }
+  }
+}
+
+ul#email-list {
+  margin: 20px;
+  font-size: 80%;
+  list-style-type: none;
+  padding: 0;
+
+  // Special list states (loading, empty, error)
+  li.loading-state,
+  li.empty-state,
+  li.error-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: $color-grey;
+    font-family: $font-sans;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: $color-accent;
+    }
+  }
+  
+  li.loading-state::before {
+    animation: spin 0.8s linear infinite;
+  }
+  
+  li.empty-state::before {
+    content: '📭';
+    font-size: 40px;
+    border: none;
+    animation: none;
+  }
+  
+  li.error-state {
+    color: #c00;
+    
+    &::before {
+      content: '⚠️';
+      font-size: 40px;
+      border: none;
+      animation: none;
+    }
+  }
+
+  .email-mobbex,
+  .email-otros {
+    display: none;
+  }
+
+  li.email {
+    margin-bottom: 5px;
+    display: none;
+
+    &.show {
+      display: block;
+    }
+
+    a {
+      border-radius: 5px;
+      padding: 10px;
+      display: block;
+      border-left: 3px solid transparent;
+      border-bottom: 2px solid $color-email-bottom;
+      position: relative;
+
+      &:hover {
+        background: $color-email-hover;
+
+        .title {
+          color: #888;
+        }
+      }
+
+      &.active,
+      &.active:hover {
+        background: $color-email-active;
+        border-color: $color-email-border;
+        border-bottom-color: $color-email-bottom;
+
+        &::after {
+          color: #777777
+        }
+      }
+
+      .title {
+        color: transparent;
+        text-transform: uppercase;
+        font-family: $font-sans;
+        font-size: 70%;
+        position: absolute;
+        top: 43px;
+        left: 10px;
+
+        &.active {
+          color: #777;
+        }
+      }
+    }
+
+    &-vip {
+      a {
+        border-left: 3px solid $color-vip;
+        background: $color-tag-vip-bg;
+
+        .date {
+          right: 20px;
+        }
+
+        &::after {
+          content: '\2605';
+          position: absolute;
+          right: 8px;
+          top: 13px;
+          color: $color-vip;
+        }
+      }
+
+      .index {
+        background: $color-tag-index2;
+      }
+    }
+
+    .subject {
+      padding: 25px 0 10px;
+      display: block;
+      font-size: 1.2em;
+      font-family: $font-serif;
+    }
+
+    .date {
+      color: $color-black;
+      font-family: $font-sans;
+      margin: 0 5px 0 0;
+      font-size: 80%;
+      padding: 4px 0;
+      color: $color-light-grey;
+      position: absolute;
+      right: 0;
+      top: 9px;
+    }
+
+    .favorite-btn {
+      position: absolute;
+      bottom: 0;
+      right: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+
+      .heart {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        color: #777;
+        transition: fill 0.15s ease, color 0.15s ease;
+      }
+
+      &[aria-pressed="true"] .heart {
+        fill: currentColor;
+        color: #e53935;
+      }
+    }
+  }
+}
+
+// Favorites filter button
+.btn-favorites {
+  &.active {
+    background: #ffc107;
+    color: #000;
+  }
+}
+
+#metadata-box {
+  font-family: 'Lato', sans-serif !important;
+  width: 600px;
+  max-width: 90%;
+  margin: auto;
+  padding: 20px;
+  background: #fdf7f7;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  line-height: 150%;
+
+  strong,
+  * {
+    font-family: inherit !important;
+  }
+
+  h1.subject {
+    margin: 10px 0;
+    line-height: 125%;
+  }
+
+  h4 {
+    font-size: 70% !important;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: #777;
+  }
+
+  div {
+    font-size: 90%;
+    font-weight: 400;
+    color: #333;
+  }
+
+  .from {
+    float: left;
+
+    span {
+      font-size: 90%;
+      color: #666;
+    }
+  }
+
+  .date {
+    float: right;
+    color: #888;
+    font-size: 80%;
+
+    >span {
+      float: right;
+      clear: both;
+      line-height: 150%;
+
+      span {
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .vip {
+    clear: both;
+    padding: 30px 0 0;
+    font-size: 80%;
+    line-height: 150%;
+    color: #92939c;
+  }
+
+  .tags {
+    clear: both;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  &.vip-campaign {
+    background: $color-tag-vip-bg;
+    border-bottom: 3px solid #e2e6fa;
+    border-radius: 0 0 3px 3px;
+    position: relative;
+
+    &::after {
+      content: '\2605';
+      position: absolute;
+      right: 8px;
+      bottom: 0;
+      color: $color-vip;
+      font-size: 80%;
+      right: 10px;
+      bottom: 4px;
+    }
+  }
+}
+
+// TAGS
+#filters {
+  .btn {
+    @include button-base;
+
+    &-sort {
+      margin-top: 20px !important;
+      clear: both;
+    }
+
+    &.active.btn-all {
+      background: $color-black;
+      color: $color-white;
+    }
+
+    @include tag-colors;
+
+    &.btn-club,
+    &.btn-bookclub,
+    &.btn-mobbex {
+      display: none;
+    }
+  }
+}
+
+.ml-hide-branding {
+  .editor-html-code {
+    display: none;
+  }
+}
+
+#mail-wrapper {
+  position: relative; // Needed for preview-fade absolute positioning
+
+  .editor-html-code {
+    display: none;
+  }
+}
+
+@media all and (min-width: 1024px) and (max-width: 1280px) {}
+
+@media all and (min-width: 768px) and (max-width: 1024px) {}
+
+@media all and (min-width: 480px) and (max-width: 768px) {}
+
+@media all and (max-width: 480px) {
+  ul#email-list {
+    padding: 0;
+  }
+
+  #filters {
+    .btn {
+      font-size: 10px;
+    }
+  }
+
+  #metadata-box {
+    font-size: 90%;
+
+    .tags {
+      margin: 15px 0;
+    }
+
+    .from {
+      strong {
+        float: left;
+      }
+
+      span {
+        display: block;
+        float: left;
+        clear: left;
+        line-height: 100%;
+      }
+    }
+
+    .date {
+      font-size: 80%;
+    }
+  }
+}
+
+.email .tag,
+.tags .tag {
+  font-family: $font-sans;
+  border-radius: 4px;
+  padding: 4px 8px;
+  background: $color-tag-default;
+  margin: 4px;
+  margin-left: 0;
+  font-size: 9px;
+  line-height: 150%;
+  text-transform: uppercase;
+  z-index: 10;
+  display: inline-block;
+  position: relative;
+}
+
+.tag {
+  &.tag-bis {
+    z-index: 0;
+    background: $color-tag-bis;
+    margin-left: -2px;
+  }
+
+  &.tag-index {
+    background: $color-tag-index;
+    margin: 0 0 0 -7px;
+    z-index: 1;
+    border-radius: 0 4px 4px 0;
+    padding-right: 6px;
+    color: #555;
+  }
+
+  @include tag-colors;
+}
+
+// =========================
+// Preview Mode Styles
+// =========================
+
+// Campaign content wrapper needs relative positioning
+#campaign-content {
+  position: relative; // Positioning context for preview-fade
+}
+
+table.container td {
+  position: relative;
+}
+
+.preview-mode {
+  position: relative;
+  height: auto !important;
+  // Disabled links styling
+  .disabled-link {
+    cursor: not-allowed !important;
+    color: #006669 !important;
+    border-bottom: 1px dashed #006669 !important;
+    text-decoration: none !important;
+
+    &:hover {
+      text-decoration: none !important;
+      color: #999 !important;
+    }
+  }
+}
+
+// Preview fade - positioned OUTSIDE campaign templates
+// Positioned relative to body or nearest positioned ancestor
+.preview-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 500px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.9) 70%, rgba(255, 255, 255, 1) 100%);
+  pointer-events: none;
+  z-index: 900; // Below overlay (1000) but above campaign content
+}
+
+// VIP campaign specific fade (shorter, different color)
+body.vip-campaign .preview-fade {
+  height: 150px;
+  background: linear-gradient(to bottom, rgba(251, 251, 255, 0) 0%, rgba(251, 251, 255, 0.9) 60%, rgba(251, 251, 255, 1) 100%);
+}
+
+#preview-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.95);
+  color: white;
+  z-index: 1000;
+  padding: 30px 20px;
+  text-align: center;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+
+  .preview-content {
+    max-width: 600px;
+    margin: 0 auto;
+
+    h2 {
+      font-family: $font-serif;
+      font-size: 24px !important;
+      margin: 0 0 15px 0;
+      color: white;
+      font-weight: normal;
+      line-height: 125%;
+      text-align: center;
+      
+      @include mobile {
+        font-size: 18px !important;
+      }
+
+    }
+
+    p {
+      font-family: $font-sans !important;
+      font-size: 16px !important;
+      line-height: 1.5 !important;
+      margin: 0 0 1rem 0;
+      color: rgba(255, 255, 255, 0.9) !important;
+      text-align: center !important;
+
+      @include mobile {
+        font-size: 14px !important;
+      }
+
+      em {
+        font-style: italic;
+      }
+    }
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .btn {
+      @include button-base;
+      font-size: 14px;
+      padding: 12px 24px;
+      text-decoration: none;
+      display: inline-block;
+      text-transform: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      border-radius: 6px;
+
+      @include mobile {
+        font-size: 12px;
+        padding: 8px 14px;
+      }
+
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &.btn-login {
+        background: $color-accent;
+        color: white !important;
+        border: 2px solid $color-accent;
+
+        &:hover {
+          background: #1a5c56; // Darker shade of $color-accent (#2d7d74)
+          border-color: #1a5c56;
+        }
+      }
+
+      &.btn-magic-link {
+        background: #444;
+        color: #F9F9F9 !important;
+        border: 2px solid $color-accent;
+
+        &:hover {
+          background: $color-accent;
+          color: white !important;
+        }
+      }
+
+      &.btn-join {
+        background: transparent;
+        color: white !important;
+        border: 2px solid white;
+
+        &:hover {
+          background: white;
+          color: $color-accent !important;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .preview-overlay {
+    padding: 20px 15px;
+
+    .preview-content {
+      h2 {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      p {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+    }
+
+    .preview-actions {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+
+      .btn {
+        width: 100%;
+        max-width: 250px;
+        padding: 14px 20px;
+      }
+    }
+  }
+}
+
+
+// =========================
+// v0.3.0 - Inbox Layout (replaces frameset)
+// =========================
+
+// Welcome Header (navigation links)
+.welcome-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 24px;
+  background: #FFF;
+
+  .welcome-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+
+    a {
+      font-family: $font-sans;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $color-grey;
+      text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $color-main;
+      }
+    }
+  }
+}
+
+// Welcome Page (standalone page shown before viewer)
+.welcome-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #fff;
+  padding: 40px;
+  padding-top: 80px; // Account for fixed header
+
+  &.hidden {
+    display: none;
+  }
+
+  .welcome-container {
+    max-width: 700px;
+    text-align: center;
+  }
+
+  .welcome-message {
+    max-width: 700px;
+    color: #000;
+    padding: 0;
+    margin: 0 auto;
+    font-family: $font-serif;
+    text-align: left;
+
+    .welcome-header-image {
+      display: block;
+      margin: 0 auto 40px auto;
+      width: 400px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: $color-main;
+    }
+
+    p {
+      font-size: 1.1rem;
+
+      a {
+        color: $color-accent;
+        text-decoration: none;
+        border-bottom: 1px dashed #006669;
+
+        &:hover {
+          color: #1a5c56;
+        }
+      }
+    }
+  }
+
+  .welcome-actions {
+    text-align: center;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+
+    .btn,
+    .btn-enter,
+    .btn-search {
+      font-family: $font-sans;
+      font-size: 16px;
+      padding: 14px 32px;
+      background: $color-accent;
+      color: white;
+      border: 2px solid $color-accent; // Match magic-link border for consistent height
+      border-radius: 6px;
+      cursor: pointer;
+      text-transform: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(45, 125, 116, 0.3);
+      text-decoration: none;
+      display: inline-block;
+
+      &:hover {
+        background: #1a5c56;
+        border-color: #1a5c56;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(45, 125, 116, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    // Magic link - secondary login option
+    .btn-magic-link {
+      background: transparent;
+      color: $color-accent;
+      border: 2px solid $color-accent;
+      box-shadow: none;
+
+      &:hover {
+        background: $color-accent;
+        color: white;
+        box-shadow: 0 4px 12px rgba(45, 125, 116, 0.3);
+      }
+    }
+
+    .btn-search {
+      background: #000;
+      box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+
+      &:hover {
+        background: #444;
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+      }
+    }
+
+    // Admin button - subtle, only for admins
+    .btn-admin {
+      background: transparent;
+      color: #666;
+      border: 1px solid #ccc;
+      box-shadow: none;
+      padding: 14px 20px;
+
+      &:hover {
+        background: #f5f5f5;
+        color: #333;
+        border-color: #999;
+        box-shadow: none;
+        transform: none;
+      }
+    }
+  }
+
+  // Hint text below buttons
+  .hint {
+    font-family: $font-sans;
+    font-size: 14px;
+    color: $color-grey;
+    text-align: center;
+
+    a {
+      color: $color-accent;
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Main inbox container (replaces frameset)
+.inbox-layout {
+  display: flex !important; // Prevent email styles from hiding
+  width: 100%;
+  max-width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative; // Positioning context for sidebar toggle
+
+  &.hidden {
+    display: none !important;
+  }
+}
+
+// Left panel: Email list (replaces frame_list.php)
+.email-list-panel {
+  width: 400px !important; // Prevent email styles from resizing
+  flex-shrink: 0;
+  display: flex !important;
+  flex-direction: column;
+  border-right: 1px solid $color-border;
+  background: #fff;
+  overflow: hidden;
+  transition: width 0.3s ease, margin-left 0.3s ease;
+
+  // Collapsed state (tablet/desktop only)
+  &.collapsed {
+    width: 0 !important;
+    // margin-left: -400px;
+    border-right: none;
+  }
+}
+
+// Sidebar toggle button (tablet/desktop only)
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  left: 420px; // 400px sidebar + 20px padding
+  z-index: 300;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid $color-border;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  display: none; // Controlled by JavaScript
+  align-items: center;
+  justify-content: center;
+  transition: left 0.3s ease, all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+
+  &:hover {
+    background: rgba(240, 240, 240, 0.98);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// When sidebar is collapsed, move button to left edge
+.inbox-layout.sidebar-collapsed .sidebar-toggle {
+  left: 20px;
+}
+
+// Sidebar toggle button (tablet/desktop only)
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  left: 420px; // 400px sidebar + 20px padding
+  z-index: 300;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid $color-border;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  display: none; // Controlled by JavaScript
+  align-items: center;
+  justify-content: center;
+  transition: left 0.3s ease, all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+
+  &:hover {
+    background: rgba(240, 240, 240, 0.98);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// When sidebar is collapsed, move button to left edge
+.inbox-layout.sidebar-collapsed .sidebar-toggle {
+  left: 20px;
+}
+
+// Loading spinner
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: $color-accent;
+  animation: spin 0.8s linear infinite;
+
+  &.loading-large {
+    width: 40px;
+    height: 40px;
+    border-width: 4px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+
+  .loading-message {
+    text-align: center;
+    color: $color-grey;
+    font-family: $font-sans;
+    font-size: 14px;
+
+    .loading {
+      display: block;
+      margin: 0 auto 10px;
+    }
+  }
+}
+
+#email-list-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// Right panel: Content view (replaces frame_home.php)
+.content-panel {
+  flex: 1 !important;
+  min-width: 0; // Allow flex item to shrink below content size
+  max-width: 100%; // Prevent overflow beyond viewport
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #fafafa !important;
+  transition: all 0.3s ease;
+
+  // When sidebar is collapsed, content takes full width
+  &.sidebar-collapsed {
+    margin-left: 0;
+  }
+}
+
+#campaign-content {
+  min-height: 100%;
+  width: 100%;
+  max-width: 820px; // 740px content + 80px padding
+  margin: 0 auto; // Center horizontally
+  padding: 0 40px 40px;
+  background: $color-white !important;
+  box-sizing: border-box;
+
+  // Force all content to stay within bounds
+  overflow-x: hidden;
+
+  // Ensure all child elements respect centering
+  >* {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  // Metadata box and other content centered
+  #metadata-box {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  // Campaign header (subject, preview, date)
+  .campaign-header {
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    
+    .campaign-subject {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: #333;
+    }
+    
+    .campaign-preview {
+      font-size: 14px;
+      color: #666;
+      margin: 0 0 12px 0;
+      line-height: 1.4;
+    }
+    
+    .campaign-meta {
+      font-size: 13px;
+      color: #999;
+      
+      time {
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Campaign body content - isolate email styles
+  .campaign-body {
+    margin: 0 auto;
+    
+    // Reset email styles to prevent them from affecting our UI
+    // All campaign content is scoped within .campaign-body
+    * {
+      box-sizing: border-box;
+    }
+    
+    // Ensure email content doesn't break layout
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    table {
+      max-width: 100%;
+    }
+  }
+}
+
+// Placeholder for empty content panel
+.content-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: $color-grey;
+  font-family: $font-serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  text-align: center;
+  padding: 40px;
+}
+
+// ============================================================================
+// Welcome Page Overlay
+// ============================================================================
+
+.welcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.welcome-container {
+  background: $color-white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.welcome-content {
+  padding: 48px 40px;
+  text-align: center;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-black;
+  margin: 0 0 24px 0;
+  line-height: 1.3;
+}
+
+.welcome-description {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: $color-light-grey;
+  margin: 0 0 32px 0;
+  white-space: pre-line; // Preserve line breaks from database
+
+  p {
+    margin: 0 0 16px 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+
+  .btn {
+    @include button-base;
+    font-size: 1rem;
+    padding: 14px 32px;
+    min-width: 220px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-primary {
+    background: $color-btn-active;
+    color: $color-white;
+    border-color: $color-btn-active;
+
+    &:hover {
+      background: darken($color-btn-active, 5%);
+      border-color: darken($color-btn-active, 5%);
+    }
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: $color-black;
+    border-color: $color-border;
+
+    &:hover {
+      background: $color-filter-bg;
+      border-color: darken($color-border, 10%);
+    }
+  }
+}
+
+// ============================================================================
+// Mobile-only and desktop-only helpers
+// ============================================================================
+
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+// Mobile Campaign Navigation Bar
+.mobile-campaign-nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: $color-white;
+  border-bottom: 2px solid $color-filter-bg;
+  padding: 10px 15px;
+  display: none; // Hidden by default
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  // Hide on welcome page
+  .welcome-page~& {
+    display: none;
+  }
+
+  &.hidden {
+    display: none !important;
+  }
+
+  .nav-btn {
+    @include button-base;
+    font-size: 14px;
+    padding: 8px 16px;
+    margin: 0;
+    cursor: pointer;
+    border: 1px solid $color-border;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: $color-btn-active;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  .nav-back {
+    text-transform: none;
+    font-size: 14px;
+
+    span {
+      font-size: 16px;
+      margin-right: 4px;
+    }
+  }
+
+  .nav-arrows {
+    display: flex;
+    gap: 8px;
+
+    .nav-arrow {
+      width: 44px;
+      height: 44px;
+      font-size: 18px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// Mobile: stack panels vertically and adjust layout
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  // Show mobile navigation bar on mobile devices (when not hidden)
+  .mobile-campaign-nav {
+    display: flex;
+
+    &.hidden {
+      display: none !important;
+    }
+  }
+
+  // Welcome overlay responsive
+  .welcome-overlay {
+    padding: 16px;
+  }
+
+  .welcome-content {
+    padding: 32px 24px;
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .welcome-description {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  .welcome-actions {
+    .btn {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+
+  .inbox-layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .email-list-panel {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid $color-border;
+    overflow: visible;
+    padding-top: 0; // Account for fixed filter-box header
+
+    &.viewing-campaign {
+      display: none !important;
+    }
+
+    // No collapse on mobile
+    &.collapsed {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  // Hide sidebar toggle on mobile
+  .sidebar-toggle {
+    display: none !important;
+  }
+
+  #email-list-container {
+    overflow-y: visible;
+    max-height: none;
+  }
+
+  // Fix sticky header on mobile - use fixed position since body scrolls
+  #filter-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+  }
+
+  .content-panel {
+    height: auto;
+    overflow-y: visible;
+    background: $color-white; // Mobile uses white background
+
+    // Hide content panel by default on mobile
+    #campaign-content {
+      display: none;
+      padding: 20px 0; // Less padding on mobile
+      max-width: 100%; // Full width on mobile
+      overflow-x: hidden;
+      
+      // Force email content to be responsive on mobile
+      // Override inline styles from MailerLite emails
+      table,
+      tbody,
+      tr,
+      td,
+      div {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+      
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+    }
+
+    &.viewing-campaign {
+      min-height: 100vh;
+
+      // Show campaign content when viewing
+      #campaign-content {
+        display: block;
+      }
+    }
+  }
+
+  // Welcome header responsive
+  .welcome-header {
+    padding: 12px 16px;
+
+    .welcome-nav {
+      gap: 16px;
+
+      a {
+        font-size: 10px;
+      }
+    }
+  }
+
+  .welcome-page {
+    padding: 20px;
+    padding-top: 60px;
+
+    .welcome-message {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .welcome-header-image {
+        margin-top: 20px;
+        width: 250px;
+      }
+
+      p,
+      ul li {
+        font-size: 0.85rem;
+        line-height: 150%;
+      }
+    }
+
+    .welcome-actions {
+      flex-direction: column;
+      align-items: center;
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+      }
+    }
+  }
+}
+
+// Tablet: Show sidebar toggle, allow collapse
+@media (min-width: 769px) and (max-width: 1024px) {
+  .email-list-panel {
+    width: 320px; // Slightly narrower on tablet
+
+    &.collapsed {
+      width: 0;
+    }
+  }
+
+  .sidebar-toggle {
+    display: flex !important; // Override JS control
+    left: 340px; // 320px sidebar + 20px padding
+  }
+
+  .inbox-layout.sidebar-collapsed .sidebar-toggle {
+    left: 20px;
+  }
+}
+
+// Desktop: Full width sidebar, toggle available
+@media (min-width: 1025px) {
+  .sidebar-toggle {
+    display: flex !important; // Override JS control
+  }
+}
+
+// =========================
+// Search Page Styles
+// =========================
+// Note: Using @import for partials is deprecated but required until full migration
+// to @use/@forward module system. Suppressing warning as it's a known issue.
+@import 'search';
+
+// =========================
+// Release Notes Modal Styles
+// =========================
+@import 'RELEASE-NOTES-modal';
+
+// =========================
+// Magic Link Authentication Pages
+// =========================
+.magic-link-container,
+.verify-container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 40px;
+  background: $color-white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-family: $font-sans; // UI pages use sans-serif
+
+  h1 {
+    font-family: $font-sans;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 28px;
+  }
+
+  .subtitle {
+    color: $color-light-grey;
+    margin-bottom: 30px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  p {
+    a {
+      text-decoration: none;
+      border-bottom: 1px dashed $color-blue;
+    }
+  }
+}
+
+.verify-container {
+  text-align: center;
+
+  h1 {
+    margin-bottom: 20px;
+  }
+}
+
+// Magic link form elements
+.magic-link-form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: $color-main;
+  }
+
+  input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $color-blue;
+    }
+  }
+}
+
+.magic-link-btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: $color-blue;
+  color: $color-white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #365e85; // $color-blue darkened 10%
+  }
+
+  &:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+  }
+}
+
+.magic-link-error {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+
+  a {
+    color: #c33;
+    text-decoration: underline;
+
+    &:hover {
+      color: #900;
+    }
+  }
+}
+
+.magic-link-success {
+  background: #efe;
+  border: 1px solid #cfc;
+  color: #3a3;
+  padding: 20px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+
+  strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #2a2;
+  }
+}
+
+.magic-link-error-box {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 20px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.magic-link-info-box {
+  background: #f8f9fa;
+  border-left: 4px solid $color-blue;
+  padding: 15px;
+  margin-top: 20px;
+  font-size: 14px;
+  color: $color-light-grey;
+  line-height: 1.5;
+
+  a {
+    color: $color-blue;
+  }
+}
+
+.magic-link-back {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+
+  a {
+    color: $color-blue;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.magic-link-btn-primary {
+  display: inline-block;
+  padding: 12px 24px;
+  background: $color-blue;
+  color: $color-white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-top: 20px;
+
+  &:hover {
+    background: #365e85; // $color-blue darkened 10%
+  }
+}
+
+// =========================
+// Guest Invitation Banner
+// =========================
+// Discreet banner shown at the bottom for guest users
+.guest-invitation-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(60, 166, 155, 0.95); // $color-primary with slight transparency
+  color: $color-white;
+  text-align: center;
+  padding: 12px 20px;
+  font-size: 13px;
+  z-index: 500;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+
+  p {
+    margin: 0;
+    line-height: 1.4;
+    font-family: $font-sans;
+  }
+
+  a {
+    color: $color-white;
+    font-weight: 600;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  em {
+    font-style: normal;
+  }
+}
+
+// On mobile, ensure content doesn't get hidden behind the banner
+@media (max-width: 768px) {
+  .guest-invitation-banner {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+
+  // Add bottom padding to body when guest banner is shown
+  body:has(.guest-invitation-banner) {
+    padding-bottom: 50px;
+  }
+
+      #templateBody .mcnTextContent, 
+      #templateBody .mcnTextContent p {
+        font-size: 16px !important;
+      }
+}
+

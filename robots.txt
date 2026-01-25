@@ -1,0 +1,31 @@
+# Allow social media crawlers for card generation
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Pinterestbot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: *
+Disallow: /
+Allow: /index.php

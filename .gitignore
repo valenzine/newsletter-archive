@@ -1,0 +1,27 @@
+
+.DS_Store
+/vendor
+/db/*.sqlite
+/db/*.sqlite-*
+/source/mailchimp_campaigns/*
+!/source/mailchimp_campaigns/.gitkeep
+/source/mailerlite_campaigns/*
+!/source/mailerlite_campaigns/.gitkeep
+/tests
+/tmp/*
+!/tmp/.gitkeep
+/node_modules
+/.env
+*.map
+
+# Development planning files
+/.plan
+
+# Documentation files (keep important ones)
+*.md
+!README.md
+!CHANGELOG.md
+!DEPLOYMENT.md
+!RELEASE_NOTES.md
+!RELEASE-NOTES.md
+!docs/*.md

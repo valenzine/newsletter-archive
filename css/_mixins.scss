@@ -1,0 +1,61 @@
+// Breakpoints
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$breakpoint-wide: 1440px;
+
+// Media Query Mixins
+@mixin mobile {
+  @media (max-width: #{$breakpoint-mobile}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-mobile + 1px}) and (max-width: #{$breakpoint-tablet}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: #{$breakpoint-tablet}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-desktop}) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media (min-width: #{$breakpoint-wide}) {
+    @content;
+  }
+}
+
+// Custom breakpoint mixin
+@mixin respond-to($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}
+
+// Usage examples:
+//
+// .my-element {
+//   font-size: 16px;
+//
+//   @include mobile {
+//     font-size: 14px;
+//   }
+//
+//   @include tablet-up {
+//     font-size: 18px;
+//   }
+//
+//   @include desktop {
+//     font-size: 20px;
+//   }
+// }
