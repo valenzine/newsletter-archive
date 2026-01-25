@@ -262,7 +262,7 @@ $body_classes = [$is_mobile ? 'mobile' : 'desktop'];
                     <h1><?= htmlspecialchars($site_title) ?></h1>
                 </div>
                 <div id="filters">
-                    <a href="/search.php" class="btn btn-search" aria-label="<?= htmlspecialchars(__('nav.search')) ?>">
+                    <a href="/search" class="btn btn-search" aria-label="<?= htmlspecialchars(__('nav.search')) ?>">
                         🔍 <?php _e('nav.search'); ?>
                     </a>
                     <button class="btn btn-sort" id="sort-toggle"><?php _e('sort.newest_first'); ?></button>

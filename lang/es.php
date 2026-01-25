@@ -10,7 +10,7 @@ return [
     // Site
     'site' => [
         'title' => 'Archivo de Newsletter',
-        'description' => 'Archivo de campañas de email anteriores',
+        'description' => 'Archivo de correos anteriores',
     ],
     
     // Navigation
@@ -31,8 +31,8 @@ return [
     
     // Campaign list
     'list' => [
-        'loading' => 'Cargando campañas...',
-        'no_campaigns' => 'No se encontraron campañas',
+        'loading' => 'Cargando correos...',
+        'no_campaigns' => 'No se encontraron correos',
         'select_campaign' => 'Seleccioná un email de la lista para leerlo',
     ],
     
@@ -47,7 +47,7 @@ return [
     'search' => [
         'page_title' => 'Buscar en el archivo',
         'title' => 'Buscar en el archivo',
-        'subtitle' => 'Buscá entre %s campañas',
+        'subtitle' => 'Buscá entre %s correos',
         'placeholder' => '¿Qué estás buscando?',
         'button' => 'Buscar',
         'clear' => 'Limpiar búsqueda',
@@ -70,8 +70,8 @@ return [
     // Admin
     'admin' => [
         'title' => 'Panel de Administración',
-        'sync' => 'Sincronizar Campañas',
-        'import' => 'Importar Campañas',
+        'sync' => 'Sincronizar correos',
+        'import' => 'Importar correos',
         'settings' => 'Configuración',
         'last_sync' => 'Última sincronización: {date}',
         'never_synced' => 'Nunca sincronizado',
@@ -79,18 +79,18 @@ return [
         'syncing' => 'Sincronizando...',
         'sync_success' => 'Sincronización completada exitosamente',
         'sync_error' => 'Error en la sincronización: {error}',
-        'campaigns_total' => 'Total de campañas: {count}',
-        'campaigns_hidden' => 'Campañas ocultas: {count}',
+        'campaigns_total' => 'Total de correos: {count}',
+        'campaigns_hidden' => 'Correos ocultos: {count}',
     ],
     
     // Import
     'import' => [
-        'title' => 'Importar Campañas de Mailchimp',
-        'description' => 'Importá campañas desde un archivo ZIP exportado de Mailchimp.',
+        'title' => 'Importar correos de Mailchimp',
+        'description' => 'Importá correos desde un archivo ZIP exportado de Mailchimp.',
         'select_file' => 'Seleccionar archivo ZIP',
         'select_csv' => 'Seleccionar campaigns.csv',
         'importing' => 'Importando...',
-        'success' => 'Se importaron {count} campañas exitosamente',
+        'success' => 'Se importaron {count} correos exitosamente',
         'error' => 'Error en la importación: {error}',
         'no_file' => 'Por favor seleccioná un archivo para importar',
     ],

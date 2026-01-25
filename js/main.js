@@ -132,10 +132,10 @@ const ArchiveApp = {
     // Handle going back from campaign (to search or to list)
     goBackFromCampaign() {
         if (this.state.fromSearch) {
-            // Build search URL with query if we have one
-            let searchUrl = '/search.php';
+            // Build search URL with query if we have one (clean URL format)
+            let searchUrl = '/search';
             if (this.state.searchQuery) {
-                searchUrl += '?q=' + encodeURIComponent(this.state.searchQuery);
+                searchUrl += '/' + encodeURIComponent(this.state.searchQuery);
             }
             window.location.href = searchUrl;
         } else {
@@ -151,10 +151,10 @@ const ArchiveApp = {
         // Don't add if already exists
         if (campaignHeader.querySelector('.back-to-search')) return;
         
-        // Build search URL with query
-        let searchUrl = '/search.php';
+        // Build search URL with query (clean URL format)
+        let searchUrl = '/search';
         if (this.state.searchQuery) {
-            searchUrl += '?q=' + encodeURIComponent(this.state.searchQuery);
+            searchUrl += '/' + encodeURIComponent(this.state.searchQuery);
         }
         
         // Create back link
