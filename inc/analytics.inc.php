@@ -12,9 +12,12 @@ if (!function_exists('get_setting')) {
 }
 
 // Get Google Analytics ID from settings (with .env fallback)
-$google_analytics_id = get_setting('google_analytics_id');
-if (empty($google_analytics_id) && isset($_ENV['GOOGLE_ANALYTICS_ID'])) {
-    $google_analytics_id = $_ENV['GOOGLE_ANALYTICS_ID'];
+$google_analytics_id = trim((string) get_setting('google_analytics_id'));
+if ($google_analytics_id === '' && isset($_ENV['GOOGLE_ANALYTICS_ID'])) {
+    $env_google_analytics_id = trim((string) $_ENV['GOOGLE_ANALYTICS_ID']);
+    if ($env_google_analytics_id !== '') {
+        $google_analytics_id = $env_google_analytics_id;
+    }
 }
 
 // Only load GA4 if an ID is configured
