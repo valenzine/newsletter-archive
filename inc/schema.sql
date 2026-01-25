@@ -86,6 +86,12 @@ INSERT OR IGNORE INTO settings (key, value) VALUES ('og_image', NULL);
 INSERT OR IGNORE INTO settings (key, value) VALUES ('twitter_site', NULL);
 INSERT OR IGNORE INTO settings (key, value) VALUES ('twitter_creator', NULL);
 
+-- Automation settings
+INSERT OR IGNORE INTO settings (key, value) VALUES ('cron_token', NULL);
+
+-- Localization settings
+INSERT OR IGNORE INTO settings (key, value) VALUES ('locale', NULL);
+
 -- Welcome page settings
 INSERT OR IGNORE INTO settings (key, value) VALUES ('welcome_enabled', '1');
 INSERT OR IGNORE INTO settings (key, value) VALUES ('welcome_title', 'Welcome to Our Newsletter Archive');

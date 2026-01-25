@@ -60,7 +60,9 @@ const ArchiveApp = {
         sortOrder: 'desc',
         currentCampaignId: null,
         currentCampaignIndex: -1,
-        loading: false
+        loading: false,
+        fromSearch: false,  // Track if we came from search
+        searchQuery: ''     // Store the search query to return to
     },
 
     // Initialize
@@ -69,6 +71,11 @@ const ArchiveApp = {
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
+        
+        // Check if coming from search (and capture the query)
+        const urlParams = new URLSearchParams(window.location.search);
+        this.state.fromSearch = urlParams.get('from') === 'search';
+        this.state.searchQuery = urlParams.get('q') || '';
         
         // Setup sidebar toggle (for tablet/desktop)
         this.setupSidebarToggle();
@@ -110,13 +117,65 @@ const ArchiveApp = {
         const nextBtn = document.getElementById('next-campaign');
         
         if (backBtn) {
-            backBtn.addEventListener('click', () => this.closeCampaign());
+            backBtn.addEventListener('click', () => {
+                this.goBackFromCampaign();
+            });
         }
         if (prevBtn) {
             prevBtn.addEventListener('click', () => this.navigateCampaign(-1));
         }
         if (nextBtn) {
             nextBtn.addEventListener('click', () => this.navigateCampaign(1));
+        }
+    },
+    
+    // Handle going back from campaign (to search or to list)
+    goBackFromCampaign() {
+        if (this.state.fromSearch) {
+            // Build search URL with query if we have one
+            let searchUrl = '/search.php';
+            if (this.state.searchQuery) {
+                searchUrl += '?q=' + encodeURIComponent(this.state.searchQuery);
+            }
+            window.location.href = searchUrl;
+        } else {
+            this.closeCampaign();
+        }
+    },
+    
+    // Add a "Back to Search" link in campaign header (for desktop users)
+    addBackToSearchLink(contentPanel) {
+        const campaignHeader = contentPanel.querySelector('.campaign-header');
+        if (!campaignHeader) return;
+        
+        // Don't add if already exists
+        if (campaignHeader.querySelector('.back-to-search')) return;
+        
+        // Build search URL with query
+        let searchUrl = '/search.php';
+        if (this.state.searchQuery) {
+            searchUrl += '?q=' + encodeURIComponent(this.state.searchQuery);
+        }
+        
+        // Create back link
+        const backLink = document.createElement('a');
+        backLink.href = searchUrl;
+        backLink.className = 'back-to-search';
+        backLink.innerHTML = '← ' + (this.t('nav.back_to_search') || 'Back to search results');
+        
+        // Insert at the top of campaign header
+        campaignHeader.insertBefore(backLink, campaignHeader.firstChild);
+    },
+    
+    // Update back button text/label based on context
+    updateBackButton() {
+        const backBtn = document.getElementById('back-to-list');
+        if (!backBtn) return;
+        
+        if (this.state.fromSearch) {
+            backBtn.setAttribute('aria-label', this.t('nav.back_to_search') || 'Back to search');
+        } else {
+            backBtn.setAttribute('aria-label', this.t('nav.back_to_list') || 'Back to list');
         }
     },
 
@@ -177,16 +236,25 @@ const ArchiveApp = {
             return;
         }
         
-        list.innerHTML = this.state.campaigns.map((campaign, index) => `
+        // Get locale from config
+        const locale = window.archiveCfg?.locale || 'en';
+        
+        list.innerHTML = this.state.campaigns.map((campaign, index) => {
+            // Format date using locale
+            const date = new Date(campaign.date.iso);
+            const formattedDate = date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            return `
             <li class="email show" data-index="${index}">
                 <a href="javascript:void(0)" 
                    data-campaign-id="${campaign.id}" 
                    class="${campaign.id === this.state.currentCampaignId ? 'active' : ''}">
                     <span class="subject">${this.escapeHtml(campaign.subject)}</span>
-                    <span class="date">${campaign.date.formatted}</span>
+                    <span class="date">${formattedDate}</span>
                 </a>
             </li>
-        `).join('');
+            `;
+        }).join('');
         
         // Add click handlers to campaign links
         const links = list.querySelectorAll('a[data-campaign-id]');
@@ -249,6 +317,7 @@ const ArchiveApp = {
         // Mobile: show campaign view
         if (this.isMobileView()) {
             this.showMobileCampaignView();
+            this.updateBackButton();  // Update back button label
         } else {
         }
         
@@ -258,6 +327,24 @@ const ArchiveApp = {
             
             this.removeLoadingIndicator(contentPanel);
             contentPanel.innerHTML = content;
+            
+            // Format campaign date with locale
+            const campaignDate = contentPanel.querySelector('.campaign-date[data-iso]');
+            if (campaignDate) {
+                const locale = window.archiveCfg?.locale || 'en';
+                const isoDate = campaignDate.getAttribute('data-iso');
+                const date = new Date(isoDate);
+                campaignDate.textContent = date.toLocaleDateString(locale, { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+            
+            // Add "Back to Search" link if coming from search (for desktop users)
+            if (this.state.fromSearch) {
+                this.addBackToSearchLink(contentPanel);
+            }
             
             // Scroll to top of content
             contentPanel.scrollTop = 0;

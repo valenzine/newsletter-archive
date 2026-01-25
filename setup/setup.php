@@ -11,7 +11,6 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../inc/bootstrap.php';
 require_once __DIR__ . '/../inc/database.inc.php';
 require_once __DIR__ . '/../inc/functions.php';
-require_once __DIR__ . '/../inc/i18n.php';
 require_once __DIR__ . '/../inc/admin_auth.php';
 
 // Start session
@@ -80,9 +79,7 @@ if (!admin_exists()) {
         <meta name="robots" content="noindex, nofollow">
         <title>First-Time Setup - <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
         <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>">
-        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
         <style>
             .setup-container { max-width: 500px; margin: 100px auto; padding: 0 20px; }
             .setup-box { background: var(--card-bg, #fff); border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -168,9 +165,7 @@ $admin = get_admin();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php _e('admin.title'); ?> | <?= htmlspecialchars($site_title) ?></title>
     <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
 </head>
 <body class="admin-page">
     <div class="admin-header">

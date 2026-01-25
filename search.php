@@ -10,9 +10,6 @@
 require_once __DIR__ . '/inc/bootstrap.php';
 require_once __DIR__ . '/inc/functions.php';
 require_once __DIR__ . '/inc/database.inc.php';
-require_once __DIR__ . '/inc/i18n.php';
-
-load_language(get_locale());
 
 // Get search query from URL
 $search_query = isset($_GET['q']) ? trim($_GET['q']) : '';
@@ -25,6 +22,7 @@ $search_config = [
     'apiBase' => '',
     'initialQuery' => $search_query,
     'siteName' => $site_title,
+    'locale' => get_locale(),
     'i18n' => get_translations()
 ];
 

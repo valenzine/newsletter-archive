@@ -12,9 +12,35 @@ require_once __DIR__.'/../inc/functions.php';
 require_once __DIR__.'/../inc/database.inc.php';
 require_once __DIR__.'/../inc/admin_auth.php';
 
-if (!is_admin_authenticated()) {
+// Check for cron mode (automated sync via token)
+$cron_mode = !empty($cron_token) && isset($_GET['cron_token']) && $_GET['cron_token'] === $cron_token;
+
+if (!is_admin_authenticated() && !$cron_mode) {
     http_response_code(403);
     echo "<h1>403 Forbidden</h1><p>You are not authorized to access this page.</p>";
+    exit;
+}
+
+// Cron mode: JSON API response (no HTML interface)
+if ($cron_mode) {
+    header('Content-Type: application/json');
+    
+    try {
+        // Use optimized cron function (only checks for new campaigns)
+        $stats = sync_new_campaigns_only($mailerlite_api_key);
+        echo json_encode([
+            'success' => true,
+            'timestamp' => date('Y-m-d H:i:s'),
+            'stats' => $stats
+        ]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+    
     exit;
 }
 
@@ -140,6 +166,7 @@ $last_sync = get_setting('last_sync', 'Never');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MailerLite Sync | <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
     <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
+<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
     <style>
         .sync-controls {
             margin: 2rem 0;

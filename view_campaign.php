@@ -50,7 +50,8 @@ if ($is_ajax) {
         echo '<p class="campaign-preview">' . htmlspecialchars($campaign['preview_text']) . '</p>';
     }
     echo '<div class="campaign-meta">';
-    echo '<time datetime="' . htmlspecialchars($campaign['sent_at']) . '">' . 
+    // Output ISO date in data attribute, will be formatted by JavaScript using locale
+    echo '<time datetime="' . htmlspecialchars($campaign['sent_at']) . '" class="campaign-date" data-iso="' . htmlspecialchars($campaign['sent_at']) . '">' . 
          htmlspecialchars(date('F j, Y', strtotime($campaign['sent_at']))) . '</time>';
     echo '</div>';
     echo '</div>';
@@ -74,5 +75,13 @@ if ($is_ajax) {
 }
 
 // Direct access: Redirect to SPA format
-header('Location: /?id=' . urlencode($campaign_id), true, 301);
+// Preserve 'from' and 'q' parameters if present (for search context)
+$redirectUrl = '/?id=' . urlencode($campaign_id);
+if (isset($_GET['from']) && $_GET['from'] === 'search') {
+    $redirectUrl .= '&from=search';
+    if (isset($_GET['q']) && !empty($_GET['q'])) {
+        $redirectUrl .= '&q=' . urlencode($_GET['q']);
+    }
+}
+header('Location: ' . $redirectUrl, true, 301);
 exit;

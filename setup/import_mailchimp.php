@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['mailchimp_zip'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mailchimp Import | <?= htmlspecialchars($site_title) ?></title>
     <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
+<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
 </head>
 <body class="admin-page">
 

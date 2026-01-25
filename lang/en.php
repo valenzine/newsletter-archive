@@ -16,6 +16,7 @@ return [
     // Navigation
     'nav' => [
         'back_to_list' => 'Back to list',
+        'back_to_search' => 'Back to search',
         'previous' => 'Previous',
         'next' => 'Next',
         'search' => 'Search',

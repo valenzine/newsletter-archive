@@ -376,6 +376,7 @@ $recoverable = array_filter($missing_files, function($c) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" />
     <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
+<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
 </head>
 <body class="admin-page">
     <div class="admin-header">

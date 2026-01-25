@@ -43,6 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             update_setting('welcome_subscribe_text', !empty($_POST['welcome_subscribe_text']) ? trim($_POST['welcome_subscribe_text']) : null);
             update_setting('welcome_archive_button_text', !empty($_POST['welcome_archive_button_text']) ? trim($_POST['welcome_archive_button_text']) : null);
             
+            // Automation Settings
+            update_setting('cron_token', !empty($_POST['cron_token']) ? trim($_POST['cron_token']) : null);
+            
+            // Localization Settings
+            update_setting('locale', !empty($_POST['locale']) ? trim($_POST['locale']) : null);
+            
             $success_message = 'Settings saved successfully!';
         } catch (Exception $e) {
             $error_message = 'Error saving settings: ' . htmlspecialchars($e->getMessage());
@@ -75,9 +81,7 @@ function get_setting_display(string $key, string $env_key = '', $default = ''): 
     <meta name="robots" content="noindex, nofollow">
     <title>Site Settings - <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
     <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>">
-    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
 </head>
 <body class="admin-page">
 
@@ -263,6 +267,48 @@ function get_setting_display(string $key, string $env_key = '', $default = ''): 
                             value="<?= htmlspecialchars($settings['welcome_archive_button_text'] ?? '') ?>"
                             placeholder="Browse Archive (default)"
                         >
+                    </div>
+                </div>
+                
+                <!-- Automation Settings -->
+                <div class="result-box">
+                    <h2>Automation & Cron Jobs</h2>
+                    
+                    <div class="form-group">
+                        <label for="cron_token">Cron Token (Security Key)</label>
+                        <input 
+                            type="text" 
+                            id="cron_token" 
+                            name="cron_token" 
+                            value="<?= htmlspecialchars($settings['cron_token'] ?? '') ?>"
+                            placeholder="Leave empty to disable cron access"
+                        >
+                        <small>Secret token for automated sync via cron job. Generate with: <code>openssl rand -hex 32</code></small>
+                    </div>
+                    
+                    <?php if (!empty($settings['cron_token'])): ?>
+                        <div class="alert alert-info">
+                            <strong>Cron URL:</strong><br>
+                            <code><?= htmlspecialchars($site_base_url) ?>/setup/mailerlite.php?cron_token=<?= htmlspecialchars($settings['cron_token']) ?></code>
+                            
+                            <p style="margin-top: 15px;"><strong>Example cron job (sync daily at 8 AM):</strong></p>
+                            <code>0 8 * * * wget -qO- '<?= htmlspecialchars($site_base_url) ?>/setup/mailerlite.php?cron_token=<?= htmlspecialchars($settings['cron_token']) ?>'</code>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Localization Settings -->
+                <div class="result-box">
+                    <h2>Localization</h2>
+                    
+                    <div class="form-group">
+                        <label for="locale">Language</label>
+                        <select id="locale" name="locale">
+                            <option value="">Default (from .env: <?= htmlspecialchars($_ENV['LOCALE'] ?? 'en') ?>)</option>
+                            <option value="en" <?= ($settings['locale'] ?? '') === 'en' ? 'selected' : '' ?>>English</option>
+                            <option value="es" <?= ($settings['locale'] ?? '') === 'es' ? 'selected' : '' ?>>Español</option>
+                        </select>
+                        <small>Choose the language for the interface. Leave as Default to use <code>LOCALE</code> from .env</small>
                     </div>
                 </div>
                 

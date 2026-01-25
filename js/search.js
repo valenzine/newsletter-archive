@@ -25,24 +25,24 @@ function generateTitle(campaign) {
     if (campaign.tags && campaign.tags.includes('E')) {
         return `EXTRAS #${campaign.number}`;
     }
-    
+
     // For other campaigns, generate title from date
     const dateString = campaign.date;
-    
+
     // Parse date in format DD/MM/YYYY
     const parts = dateString.split('/');
     if (parts.length !== 3) return 'Sin título';
-    
+
     const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10);
-    
+
     // Spanish day names
     const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    
+
     // Create date object (months are 0-indexed in JavaScript)
     const date = new Date(parseInt(parts[2], 10), month - 1, day);
     const dayName = dayNames[date.getDay()];
-    
+
     // Format as "Martes 31/08"
     return `${dayName} ${parts[0]}/${parts[1]}`;
 }
@@ -85,7 +85,7 @@ function initializeFilters() {
 filtersToggle.addEventListener('click', () => {
     const isCollapsed = filtersContent.classList.toggle('collapsed');
     filtersToggle.classList.toggle('collapsed', isCollapsed);
-    
+
     // Save preference
     localStorage.setItem('filtersCollapsed', isCollapsed);
 });
@@ -139,12 +139,12 @@ if (queryToSearch) {
         searchInput.value = initialQuery;
         searchClear.classList.remove('hidden');
     }
-    
+
     // Perform search and then scroll to clicked result if needed
     (async () => {
         try {
             await performSearch();
-            
+
             // If we have a clicked result index, scroll to it
             const context = sessionStorage.getItem('searchContext');
             if (context) {
@@ -155,7 +155,7 @@ if (queryToSearch) {
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
                             const resultElement = document.getElementById(`result-${data.clickedResultIndex}`);
-                            
+
                             if (resultElement) {
                                 resultElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                 // Highlight briefly
@@ -188,7 +188,7 @@ searchClear.addEventListener('click', () => {
     searchInput.value = '';
     searchClear.classList.add('hidden');
     searchInput.focus();
-    
+
     // Clear results and reset
     currentQuery = '';
     currentPage = 1;
@@ -200,11 +200,11 @@ searchClear.addEventListener('click', () => {
     pagination.innerHTML = ''; // Clear pagination content
     const siteName = window.searchCfg?.siteName || 'Newsletter Archive';
     document.title = `Search Archive | ${siteName}`;
-    
+
     // Clear URL - go back to base search path
     const basePath = window.location.pathname.includes('buscar') ? '/buscar' : '/search';
     window.history.pushState({}, '', basePath);
-    
+
     // Clear stored search context
     sessionStorage.removeItem('searchContext');
 });
@@ -239,7 +239,7 @@ clearFiltersBtn.addEventListener('click', () => {
     dateFrom.value = '';
     dateTo.value = '';
     sortOrder.value = 'relevance';
-    
+
     if (currentQuery) {
         currentPage = 1;
         lastSearchedFilters = ''; // Force a context mismatch when clearing filters
@@ -250,7 +250,7 @@ clearFiltersBtn.addEventListener('click', () => {
 // Perform search
 async function performSearch() {
     currentQuery = searchInput.value.trim();
-    
+
     if (!currentQuery) {
         searchStatus.innerHTML = window.searchCfg.i18n.search.enter_query || 'Enter a search term to begin';
         searchResults.innerHTML = '';
@@ -261,10 +261,10 @@ async function performSearch() {
         document.title = `Search Archive | ${siteName}`;
         return;
     }
-    
+
     // Read current filter values (including perPage which may have been changed)
     perPage = parseInt(perPageSelect.value, 10);
-    
+
     // Build current filter values
     const currentFiltersObj = {};
     if (dateFrom.value) {
@@ -276,42 +276,42 @@ async function performSearch() {
     if (sortOrder.value && sortOrder.value !== 'relevance') {
         currentFiltersObj.sort = sortOrder.value;
     }
-    
+
     // Create a hash of current query and filters
     const currentQueryStr = currentQuery;
     const currentFiltersStr = JSON.stringify(currentFiltersObj);
-    
+
     // Check if the search query or filters have changed since last search
     // If they have, reset to page 1
     if (currentQueryStr !== lastSearchedQuery || currentFiltersStr !== lastSearchedFilters) {
         currentPage = 1;
     }
-    
+
     // Update what we just searched for (for next comparison)
     lastSearchedQuery = currentQueryStr;
     lastSearchedFilters = currentFiltersStr;
-    
+
     // Build query params for API call
     const apiParams = new URLSearchParams({
         q: currentQuery,
         page: currentPage,
         per_page: perPage
     });
-    
+
     currentFilters = currentFiltersObj;
-    
+
     if (dateFrom.value) {
         apiParams.append('from', dateFrom.value);
     }
-    
+
     if (dateTo.value) {
         apiParams.append('to', dateTo.value);
     }
-    
+
     if (sortOrder.value && sortOrder.value !== 'relevance') {
         apiParams.append('sort', sortOrder.value);
     }
-    
+
     // Build URL params (exclude 'q' since it's in the path for clean URLs)
     const urlParams = new URLSearchParams();
     if (currentPage > 1) urlParams.set('page', currentPage);
@@ -319,14 +319,14 @@ async function performSearch() {
     if (dateFrom.value) urlParams.set('from', dateFrom.value);
     if (dateTo.value) urlParams.set('to', dateTo.value);
     if (sortOrder.value && sortOrder.value !== 'relevance') urlParams.set('sort', sortOrder.value);
-    
+
     // Update URL with clean format
     let newUrl;
     if (currentQuery) {
         // Use clean URL format: /search/{query} or /buscar/{query}
         const basePath = window.location.pathname.includes('buscar') ? '/buscar' : '/search';
         newUrl = `${basePath}/${encodeURIComponent(currentQuery)}`;
-        
+
         // Add pagination/filter params if present (not 'q' - it's in the path)
         const urlParamsStr = urlParams.toString();
         if (urlParamsStr) {
@@ -341,9 +341,9 @@ async function performSearch() {
             newUrl += `?${urlParamsStr}`;
         }
     }
-    
+
     window.history.pushState({}, '', newUrl);
-    
+
     // Store search context for back navigation from campaigns
     // Preserve clickedResultIndex if it exists
     const existingContext = JSON.parse(sessionStorage.getItem('searchContext') || '{}');
@@ -357,17 +357,17 @@ async function performSearch() {
         ...(existingContext.clickedResultIndex !== undefined && { clickedResultIndex: existingContext.clickedResultIndex })
     };
     sessionStorage.setItem('searchContext', JSON.stringify(searchContext));
-    
+
     // Show loading
     searchStatus.innerHTML = 'Buscando...';
     searchResults.innerHTML = '';
     pagination.classList.add('hidden');
     searchButton.disabled = true;
-    
+
     try {
         const response = await fetch(`/api/search.php?${apiParams.toString()}`);
         const data = await response.json();
-        
+
         if (data.success) {
             // Update page title with search query for analytics
             const siteName = window.searchCfg?.siteName || 'Newsletter Archive';
@@ -388,7 +388,7 @@ async function performSearch() {
 // Display search results
 function displayResults(data) {
     totalResults = data.total;
-    
+
     if (totalResults === 0) {
         searchStatus.innerHTML = `No se encontraron resultados para "<strong>${escapeHtml(currentQuery)}</strong>"`;
         searchResults.innerHTML = '';
@@ -396,15 +396,15 @@ function displayResults(data) {
         pagination.innerHTML = ''; // Clear old pagination to prevent stale display
         return;
     }
-    
+
     const startResult = ((currentPage - 1) * perPage) + 1;
     const endResult = Math.min(currentPage * perPage, totalResults);
-    
+
     searchStatus.innerHTML = `
         Mostrando ${startResult}-${endResult} de ${totalResults} resultado${totalResults !== 1 ? 's' : ''} 
         para "<strong>${escapeHtml(currentQuery)}</strong>"
     `;
-    
+
     // Render results - calculate global index for each result
     const startIndex = (currentPage - 1) * perPage;
     const resultsHtml = data.results.map((result, localIndex) => {
@@ -412,7 +412,7 @@ function displayResults(data) {
         return renderResult(result, globalIndex);
     }).join('');
     searchResults.innerHTML = `<ul class="search-results">${resultsHtml}</ul>`;
-    
+
     // Add click handlers to track which result was clicked
     document.querySelectorAll('[data-result-index]').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -423,26 +423,33 @@ function displayResults(data) {
             sessionStorage.setItem('searchContext', JSON.stringify(context));
         });
     });
-    
+
     // Render pagination
     renderPagination(data);
 }
 
 // Render single result
 function renderResult(result, index) {
-    // Format date
+    // Format date using configured locale
+    const locale = window.searchCfg?.locale || 'en';
     const date = new Date(result.sent_at);
-    const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    
+    const formattedDate = date.toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Build URL with search context (from=search + query)
+    // This allows returning to search with the same query
+    let urlWithSource = result.url + (result.url.includes('?') ? '&' : '?') + 'from=search';
+    if (currentQuery) {
+        urlWithSource += '&q=' + encodeURIComponent(currentQuery);
+    }
+
     return `
         <li class="search-result" id="result-${index}">
             <div class="result-header">
                 <h2 class="result-title">
-                    <a href="${escapeHtml(result.url)}" data-result-index="${index}">${escapeHtml(result.subject)}</a>
+                    <a href="${escapeHtml(urlWithSource)}" data-result-index="${index}">${escapeHtml(result.subject)}</a>
                 </h2>
                 <div class="result-meta">
                     <span>📅 ${formattedDate}</span>
-                    ${result.source ? `<span>📧 ${escapeHtml(result.source)}</span>` : ''}
                 </div>
             </div>
             ${result.excerpt ? `<div class="result-excerpt">${result.excerpt}</div>` : ''}
@@ -453,35 +460,35 @@ function renderResult(result, index) {
 // Render pagination
 function renderPagination(data) {
     const totalPages = Math.ceil(totalResults / perPage);
-    
+
     if (totalPages <= 1) {
         pagination.classList.add('hidden');
         pagination.innerHTML = ''; // Clear old pagination HTML
         return;
     }
-    
+
     pagination.classList.remove('hidden');
-    
+
     let paginationHtml = '';
-    
+
     // Previous button
     paginationHtml += `
         <button data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>
             ← Anterior
         </button>
     `;
-    
+
     // Page numbers (show max 5 pages)
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
-    
+
     if (startPage > 1) {
         paginationHtml += `<button data-page="1">1</button>`;
         if (startPage > 2) {
             paginationHtml += `<button disabled>...</button>`;
         }
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
         paginationHtml += `
             <button 
@@ -493,23 +500,23 @@ function renderPagination(data) {
             </button>
         `;
     }
-    
+
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
             paginationHtml += `<button disabled>...</button>`;
         }
         paginationHtml += `<button data-page="${totalPages}">${totalPages}</button>`;
     }
-    
+
     // Next button
     paginationHtml += `
         <button data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>
             Siguiente →
         </button>
     `;
-    
+
     pagination.innerHTML = paginationHtml;
-    
+
     // Attach event listeners to pagination buttons
     pagination.querySelectorAll('button[data-page]').forEach(button => {
         button.addEventListener('click', () => {

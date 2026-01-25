@@ -9,6 +9,107 @@
 use MailerLite\MailerLite;
 
 /**
+ * Quick sync for cron: Only check for new campaigns
+ * 
+ * This is optimized for daily cron jobs:
+ * - Fetches ONLY page 1 (most recent campaigns)
+ * - Stops immediately if latest campaign already exists
+ * - Never updates existing campaigns
+ * - Fast and lightweight
+ * 
+ * @param string $apiKey MailerLite API key
+ * @return array Result with count and any errors
+ */
+function sync_new_campaigns_only(string $apiKey): array {
+    $imported = 0;
+    $errors = [];
+    
+    // Create content directory if needed
+    $content_dir = __DIR__ . '/../source/mailerlite_campaigns';
+    $json_dir = $content_dir . '/json';
+    if (!is_dir($content_dir)) {
+        mkdir($content_dir, 0755, true);
+    }
+    if (!is_dir($json_dir)) {
+        mkdir($json_dir, 0755, true);
+    }
+    
+    try {
+        $mailerLite = new MailerLite(['api_key' => $apiKey]);
+        
+        // Fetch ONLY page 1 (most recent campaigns)
+        $response = $mailerLite->campaigns->get([
+            'page' => 1,
+            'filter' => ['status' => 'sent']
+        ]);
+        
+        if (!isset($response['body']['data']) || empty($response['body']['data'])) {
+            return ['imported' => 0, 'skipped' => 0, 'already_synced' => true, 'errors' => []];
+        }
+        
+        $campaigns = $response['body']['data'];
+        
+        // Check the very first campaign (latest)
+        $latest_campaign = $campaigns[0];
+        $latest_id = $latest_campaign['id'] ?? null;
+        
+        if (!$latest_id) {
+            return ['imported' => 0, 'skipped' => 0, 'already_synced' => false, 'errors' => ['Latest campaign missing ID']];
+        }
+        
+        // If latest campaign already exists, we're done - nothing new
+        if (get_campaign_by_source_id($latest_id, 'mailerlite')) {
+            update_setting('last_sync', date('Y-m-d H:i:s'));
+            return [
+                'imported' => 0,
+                'skipped' => count($campaigns),
+                'already_synced' => true,
+                'message' => 'Latest campaign already synced',
+                'errors' => []
+            ];
+        }
+        
+        // Import only NEW campaigns (ones we don't have yet)
+        foreach ($campaigns as $campaign) {
+            $campaign_id = $campaign['id'] ?? null;
+            if (!$campaign_id) {
+                continue;
+            }
+            
+            // Skip if already exists
+            if (get_campaign_by_source_id($campaign_id, 'mailerlite')) {
+                break; // Stop here - rest are old
+            }
+            
+            try {
+                if (import_mailerlite_campaign($campaign, $content_dir)) {
+                    $imported++;
+                }
+            } catch (Exception $e) {
+                $errors[] = "Failed to import campaign {$campaign_id}: " . $e->getMessage();
+            }
+        }
+        
+        update_setting('last_sync', date('Y-m-d H:i:s'));
+        
+        return [
+            'imported' => $imported,
+            'skipped' => 0,
+            'already_synced' => false,
+            'errors' => $errors
+        ];
+        
+    } catch (Exception $e) {
+        return [
+            'imported' => 0,
+            'skipped' => 0,
+            'already_synced' => false,
+            'errors' => [$e->getMessage()]
+        ];
+    }
+}
+
+/**
  * Sync campaigns from MailerLite API
  * 
  * @param string $apiKey MailerLite API key
@@ -203,7 +304,7 @@ function sync_mailerlite_campaigns(string $apiKey, ?int $limit = null, ?callable
     } while (count($campaigns) > 0);
     
     // Update last sync time
-    set_setting('last_sync', date('Y-m-d H:i:s'));
+    update_setting('last_sync', date('Y-m-d H:i:s'));
     
     if ($progressCallback) {
         $progressCallback(['message' => "════════════════════════════════════", 'type' => 'info']);

@@ -7,8 +7,8 @@
  * Loads language files from /lang/ directory.
  */
 
-// Current locale (can be overridden by .env)
-$current_locale = $_ENV['LOCALE'] ?? 'en';
+// Current locale (loaded from bootstrap.php which checks database first)
+$current_locale = $GLOBALS['locale'] ?? $_ENV['LOCALE'] ?? 'en';
 
 // Extract just the language code (en from en_US.UTF-8)
 if (strpos($current_locale, '_') !== false) {

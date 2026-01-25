@@ -640,9 +640,10 @@ function reindex_all_campaigns(?callable $progressCallback = null): array {
  * Returns NULL if setting doesn't exist or is explicitly NULL
  * 
  * @param string $key Setting key
+ * @param string|null $default Default value if setting doesn't exist
  * @return string|null Setting value
  */
-function get_setting(string $key): ?string {
+function get_setting(string $key, ?string $default = null): ?string {
     static $cache = [];
     
     if (isset($cache[$key])) {
@@ -654,7 +655,7 @@ function get_setting(string $key): ?string {
     $stmt->execute([$key]);
     $result = $stmt->fetch();
     
-    $value = $result ? $result['value'] : null;
+    $value = $result ? $result['value'] : $default;
     $cache[$key] = $value;
     
     return $value;

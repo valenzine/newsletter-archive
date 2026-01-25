@@ -45,10 +45,13 @@ $og_image = get_setting('og_image') ?? ($_ENV['OG_IMAGE'] ?? '/img/share.jpg');
 $twitter_site = get_setting('twitter_site') ?? ($_ENV['TWITTER_SITE'] ?? '');
 $twitter_creator = get_setting('twitter_creator') ?? ($_ENV['TWITTER_CREATOR'] ?? '');
 
-// Locale and timezone settings
-$locale = $_ENV['LOCALE'] ?? 'en_US.UTF-8';
+// Locale and timezone settings - Database overrides .env if set
+$locale = get_setting('locale') ?? ($_ENV['LOCALE'] ?? 'en');
 setlocale(LC_TIME, $locale);
 $timezone = new DateTimeZone($_ENV['TIMEZONE'] ?? 'UTC');
+
+// Load i18n system with the configured locale
+require_once __DIR__ . '/i18n.php';
 
 // -----------------------------------------------------------------------------
 // Environment & Debug
@@ -71,8 +74,8 @@ if (isset($_GET['debug']) && htmlspecialchars($_GET['debug']) === 'true') {
 // MailerLite API key for syncing campaigns
 $mailerlite_api_key = $_ENV['MAILERLITE_API_KEY'] ?? '';
 
-// Cron token for automated tasks (optional)
-$cron_token = $_ENV['CRON_TOKEN'] ?? null;
+// Cron token for automated tasks - load from database settings
+$cron_token = get_setting('cron_token');
 
 // -----------------------------------------------------------------------------
 // Path Configuration
