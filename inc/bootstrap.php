@@ -36,11 +36,11 @@ require_once __DIR__ . '/database.inc.php';
 // Base configuration from .env (always used)
 $site_base_url = $_ENV['SITE_BASE_URL'] ?? 'http://localhost:8182';
 $site_name = $_ENV['SITE_NAME'] ?? 'Newsletter Archive';
-$site_description = $_ENV['SITE_DESCRIPTION'] ?? 'Archive of past email campaigns';
 $admin_email = $_ENV['ADMIN_EMAIL'] ?? 'admin@localhost';
 
 // Social Metadata / SEO - Database overrides .env if set
 $site_title = get_setting('site_title') ?? ($_ENV['SITE_TITLE'] ?? $site_name);
+$site_description = get_setting('site_description') ?? ($_ENV['SITE_DESCRIPTION'] ?? 'Archive of past email campaigns');
 $og_image = get_setting('og_image') ?? ($_ENV['OG_IMAGE'] ?? '/img/share.jpg');
 $twitter_site = get_setting('twitter_site') ?? ($_ENV['TWITTER_SITE'] ?? '');
 $twitter_creator = get_setting('twitter_creator') ?? ($_ENV['TWITTER_CREATOR'] ?? '');

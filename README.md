@@ -22,6 +22,7 @@ Turn your newsletter archive into a beautiful, searchable website that you fully
 - 🔐 **Secure Admin Panel** - Database-backed authentication with rate limiting and remember-me tokens
 - ⚙️ **Easy Configuration** - Customize your site through the admin interface—no file editing required
 - 🎨 **Brand Control** - Set your site title, description, social images, and welcome page content
+- 📈 **Google Analytics 4** - Optional GA4 integration with automatic event tracking for campaigns and searches
 - 🔄 **Cron Support** - Automated daily syncs via scheduled tasks
 - 🌍 **Internationalization** - Built-in English and Spanish (Argentina) translations
 
@@ -153,6 +154,7 @@ Create a `.env` file in the project root:
 | `MAILERLITE_API_KEY` | Yes | Your MailerLite API key |
 | `SITE_NAME` | No | Default site name |
 | `SITE_DESCRIPTION` | No | Default meta description |
+| `GOOGLE_ANALYTICS_ID` | No | Google Analytics 4 Measurement ID (format: G-XXXXXXXXXX) |
 | `LOCALE` | No | Language code (`en`, `es`) |
 | `APP_ENV` | No | `development` or `production` |
 | `TIMEZONE` | No | PHP timezone identifier |
@@ -205,7 +207,6 @@ Source files: [css/styles.scss](css/styles.scss), [css/admin.scss](css/admin.scs
 newsletter-archive/
 ├── api/                      # JSON API endpoints
 │   ├── campaigns.php         # List campaigns (paginated)
-│   ├── campaign.php          # Single campaign
 │   └── search.php            # Full-text search
 ├── css/                      # SCSS source files
 ├── db/                       # SQLite database (auto-created)

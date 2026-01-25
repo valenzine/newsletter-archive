@@ -32,7 +32,15 @@ $og_image_url = str_starts_with($og_image, 'http')
 <?php if (!empty($twitter_creator)): ?>
     <meta name="twitter:creator" content="@<?= htmlspecialchars($twitter_creator) ?>" />
 <?php endif; ?>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap">
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<?php 
+// Load Google Analytics if configured
+require_once __DIR__ . '/analytics.inc.php'; 
+?>

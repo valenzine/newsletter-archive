@@ -78,9 +78,9 @@ if (preg_match('#^search/(.+)$#i', $path, $matches)) {
     exit;
 }
 
-// Route: /{campaign_id} (32 character hex hash)
-// Only match if it looks like a campaign ID (32 hex chars)
-if (preg_match('#^([a-f0-9]{32})$#i', $path, $matches)) {
+// Route: /{campaign_id} (16 character hex hash)
+// Only match if it looks like a campaign ID (16 hex chars)
+if (preg_match('#^([a-f0-9]{16})$#i', $path, $matches)) {
     $_GET['id'] = $matches[1];
     require __DIR__ . '/index.php';
     exit;

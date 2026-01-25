@@ -46,6 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             // Automation Settings
             update_setting('cron_token', !empty($_POST['cron_token']) ? trim($_POST['cron_token']) : null);
             
+            // Analytics Settings - validate Google Analytics 4 Measurement ID format
+            $ga_id = !empty($_POST['google_analytics_id']) ? trim($_POST['google_analytics_id']) : null;
+            if ($ga_id !== null && !preg_match('/^G-[A-Z0-9]+$/', $ga_id)) {
+                throw new Exception('Invalid Google Analytics 4 Measurement ID format. Must be in format G-XXXXXXXXXX (e.g., G-ABC123DEF4)');
+            }
+            update_setting('google_analytics_id', $ga_id);
+            
             // Localization Settings
             update_setting('locale', !empty($_POST['locale']) ? trim($_POST['locale']) : null);
             
@@ -295,6 +302,23 @@ function get_setting_display(string $key, string $env_key = '', $default = ''): 
                             <code>0 8 * * * wget -qO- '<?= htmlspecialchars($site_base_url) ?>/setup/mailerlite.php?cron_token=<?= htmlspecialchars($settings['cron_token']) ?>'</code>
                         </div>
                     <?php endif; ?>
+                </div>
+                
+                <!-- Analytics & Tracking -->
+                <div class="result-box">
+                    <h2>Analytics & Tracking</h2>
+                    
+                    <div class="form-group">
+                        <label for="google_analytics_id">Google Analytics 4 Measurement ID</label>
+                        <input 
+                            type="text" 
+                            id="google_analytics_id" 
+                            name="google_analytics_id" 
+                            value="<?= htmlspecialchars($settings['google_analytics_id'] ?? '') ?>"
+                            placeholder="<?= htmlspecialchars($_ENV['GOOGLE_ANALYTICS_ID'] ?? 'G-XXXXXXXXXX') ?> (from .env)"
+                        >
+                        <small>Google Analytics 4 Measurement ID (format: G-XXXXXXXXXX). Find this in your <a href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics</a> property settings under Admin → Data Streams → Web → Measurement ID. Leave empty to disable tracking.</small>
+                    </div>
                 </div>
                 
                 <!-- Localization Settings -->

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-01-25
+
+### Analytics
+- ADDED: Google Analytics 4 (GA4) integration for user behavior tracking
+- ADDED: GA4 Measurement ID configuration in admin settings
+- ADDED: Support for GOOGLE_ANALYTICS_ID environment variable (.env fallback)
+- ADDED: Conditional loading - GA4 only loads when ID is configured
+- ADDED: GA4 tracking on all public pages (campaign list, individual campaigns, search)
+- ADDED: Virtual page view tracking for SPA navigation (tracks every campaign view)
+- ADDED: Campaign metadata in GA4 events (campaign_id, campaign_subject, campaign_sent_at)
+- ADDED: Search event tracking with search terms and result counts
+- ADDED: Dynamic browser title updates for better analytics and UX
+
+### URLs & Routing
+- IMPROVED: Clean URLs for campaigns - now `/{campaign_id}` instead of `/?id={campaign_id}`
+- IMPROVED: All internal links and APIs updated to use clean URL format
+- IMPROVED: Better SEO, shareability, and professional appearance
+- FIXED: Router regex pattern to correctly match 16-character campaign IDs
+
+### UI/UX
+- IMPROVED: Select dropdown styling in admin settings (consistent with other form inputs)
+
 ## [0.1.0] - 2025-01-24
 
 Initial public release of Newsletter Archive.

@@ -246,7 +246,7 @@ const ArchiveApp = {
             
             return `
             <li class="email show" data-index="${index}">
-                <a href="javascript:void(0)" 
+                <a href="/${campaign.id}" 
                    data-campaign-id="${campaign.id}" 
                    class="${campaign.id === this.state.currentCampaignId ? 'active' : ''}">
                     <span class="subject">${this.escapeHtml(campaign.subject)}</span>
@@ -311,7 +311,7 @@ const ArchiveApp = {
         
         // Update URL
         if (updateHistory) {
-            history.pushState({ campaignId }, '', `/?id=${campaignId}`);
+            history.pushState({ campaignId }, '', `/${campaignId}`);
         }
         
         // Mobile: show campaign view
@@ -345,6 +345,9 @@ const ArchiveApp = {
             if (this.state.fromSearch) {
                 this.addBackToSearchLink(contentPanel);
             }
+            
+            // Track campaign view in Google Analytics
+            this.trackCampaignView(campaignId);
             
             // Scroll to top of content
             contentPanel.scrollTop = 0;
@@ -574,6 +577,37 @@ const ArchiveApp = {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
+    },
+    
+    // Google Analytics: Track campaign view
+    trackCampaignView(campaignId) {
+        // Only track if gtag is available (GA4 loaded)
+        if (typeof gtag !== 'function') {
+            return;
+        }
+        
+        // Find campaign details
+        const campaign = this.state.campaigns.find(c => c.id === campaignId);
+        if (!campaign) {
+            return;
+        }
+        
+        // Build the campaign URL
+        const campaignUrl = `/${campaignId}`;
+        const campaignTitle = campaign.subject || 'Untitled Campaign';
+        
+        // Send virtual page view to GA4
+        gtag('event', 'page_view', {
+            page_title: campaignTitle,
+            page_location: window.location.origin + campaignUrl,
+            page_path: campaignUrl,
+            campaign_id: campaignId,
+            campaign_subject: campaign.subject,
+            campaign_sent_at: campaign.sent_at
+        });
+        
+        // Also update document title for browser history
+        document.title = `${campaignTitle} | ${this.config.siteName}`;
     }
 };
 
