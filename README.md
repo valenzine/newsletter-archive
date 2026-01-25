@@ -22,8 +22,8 @@ Turn your newsletter archive into a beautiful, searchable website that you fully
 - 🔐 **Secure Admin Panel** - Database-backed authentication with rate limiting and remember-me tokens
 - ⚙️ **Easy Configuration** - Customize your site through the admin interface—no file editing required
 - 🎨 **Brand Control** - Set your site title, description, social images, and welcome page content
-- � **Google Analytics 4** - Optional GA4 integration with automatic event tracking for campaigns and searches
-- �🔄 **Cron Support** - Automated daily syncs via scheduled tasks
+- 📈 **Google Analytics 4** - Optional GA4 integration with automatic event tracking for campaigns and searches
+- 🔄 **Cron Support** - Automated daily syncs via scheduled tasks
 - 🌍 **Internationalization** - Built-in English and Spanish (Argentina) translations
 
 ### Technical Highlights
