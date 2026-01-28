@@ -158,95 +158,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'sync' && $_SERVER['REQUEST_ME
 
 // Main page HTML
 $last_sync = get_setting('last_sync', 'Never');
+
+// Configure page head
+$page_config = [
+    'title' => 'MailerLite Sync | ' . $site_title,
+    'body_class' => 'admin-page',
+    'custom_css' => '/css/admin.css',
+];
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MailerLite Sync | <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-    <style>
-        .sync-controls {
-            margin: 2rem 0;
-        }
-        .progress-log {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            max-height: 500px;
-            overflow-y: auto;
-            margin: 1rem 0;
-        }
-        .progress-log .log-entry {
-            padding: 0.25rem 0;
-            border-left: 3px solid transparent;
-            padding-left: 0.5rem;
-        }
-        .progress-log .log-entry.info {
-            border-left-color: #4a9eff;
-        }
-        .progress-log .log-entry.success {
-            border-left-color: #4ec9b0;
-            font-weight: 600;
-        }
-        .progress-log .log-entry.error {
-            border-left-color: #f48771;
-            color: #f48771;
-        }
-        .progress-log .log-entry.warning {
-            border-left-color: #ce9178;
-            color: #ce9178;
-        }
-        .btn-sync {
-            background: #0066cc;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-        .btn-sync:hover:not(:disabled) {
-            background: #0052a3;
-        }
-        .btn-sync:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-        .stat-card {
-            background: #f5f5f5;
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #0066cc;
-        }
-        .stat-card .label {
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .stat-card .value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-top: 0.5rem;
-        }
-    </style>
-</head>
-<body class="admin-page">
     <div class="admin-header">
         <div class="admin-header-content">
             <h1>MailerLite Sync</h1>

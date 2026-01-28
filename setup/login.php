@@ -87,100 +87,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$rateLimit['limited']) {
         }
     }
 }
+
+// Configure page head
+$page_config = [
+    'title' => 'Admin Login - ' . $site_title,
+    'noindex' => true,
+    'custom_css' => '/css/admin.css',
+];
+
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Admin Login - <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>">
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-    <style>
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 0 20px;
-        }
-        .login-box {
-            background: var(--card-bg, #fff);
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .login-title {
-            text-align: center;
-            margin-bottom: 25px;
-            color: var(--text-color, #333);
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="password"] {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color, #ddd);
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color, #007bff);
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-        }
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary-color, #007bff);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-login:hover {
-            background: var(--primary-hover, #0056b3);
-        }
-        .btn-login:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: var(--text-muted, #666);
-        }
-    </style>
-</head>
-<body class="admin-page">
+
     <div class="login-container">
         <div class="login-box">
             <h1 class="login-title">Admin Login</h1>

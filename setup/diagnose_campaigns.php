@@ -366,19 +366,17 @@ $recoverable = array_filter($missing_files, function($c) {
     return $c['source'] === 'MailerLite' && !empty($c['mailerlite_id']); 
 });
 
+
+// Configure page head
+$page_config = [
+    'title' => 'Campaign Diagnostics | ' . $site_title,
+    'body_class' => 'admin-page',
+    'custom_css' => '/css/admin.css',
+];
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campaign Diagnostics | Newsletter Archive</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" />
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-</head>
-<body class="admin-page">
     <div class="admin-header">
         <div class="admin-header-content">
             <h1>🔧 Campaign Diagnostics</h1>

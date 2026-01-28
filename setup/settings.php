@@ -79,18 +79,18 @@ function get_setting_display(string $key, string $env_key = '', $default = ''): 
     return $default;
 }
 
+
+// Configure page head
+$page_config = [
+    'title' => 'Site Settings - ' . $site_title,
+    'noindex' => true,
+    'body_class' => 'admin-page',
+    'custom_css' => '/css/admin.css',
+];
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Site Settings - <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>">
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-</head>
-<body class="admin-page">
 
     <!-- Admin Header -->
     <div class="admin-header">

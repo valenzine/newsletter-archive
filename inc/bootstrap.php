@@ -50,6 +50,9 @@ $locale = get_setting('locale') ?? ($_ENV['LOCALE'] ?? 'en');
 setlocale(LC_TIME, $locale);
 $timezone = new DateTimeZone($_ENV['TIMEZONE'] ?? 'UTC');
 
+// Make locale available globally for i18n system
+$GLOBALS['locale'] = $locale;
+
 // Load i18n system with the configured locale
 require_once __DIR__ . '/i18n.php';
 

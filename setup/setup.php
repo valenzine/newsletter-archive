@@ -70,33 +70,15 @@ if (!admin_exists()) {
     }
     
     // Show first-time setup form
+    $page_config = [
+        'title' => 'First-Time Setup - ' . $site_title,
+        'noindex' => true,
+        'custom_css' => '/css/admin.css',
+    ];
+    
+    // Output unified page head
+    require_once __DIR__ . '/../inc/page_head.inc.php';
     ?>
-    <!DOCTYPE html>
-    <html lang="<?= htmlspecialchars(get_locale()) ?>">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="robots" content="noindex, nofollow">
-        <title>First-Time Setup - <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
-        <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>">
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-        <style>
-            .setup-container { max-width: 500px; margin: 100px auto; padding: 0 20px; }
-            .setup-box { background: var(--card-bg, #fff); border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            .setup-title { text-align: center; margin-bottom: 10px; }
-            .setup-description { text-align: center; color: var(--text-muted, #666); margin-bottom: 30px; }
-            .form-group { margin-bottom: 20px; }
-            .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-            .form-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color, #ddd); border-radius: 4px; font-size: 16px; box-sizing: border-box; }
-            .form-group input:focus { outline: none; border-color: var(--primary-color, #007bff); box-shadow: 0 0 0 3px rgba(0,123,255,0.1); }
-            .btn-setup { width: 100%; padding: 12px; background: var(--primary-color, #007bff); color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: 500; cursor: pointer; }
-            .btn-setup:hover { background: var(--primary-hover, #0056b3); }
-            .error-message { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px; }
-            .success-message { background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; text-align: center; }
-            .success-message a { color: #155724; font-weight: 500; text-decoration: underline; }
-        </style>
-    </head>
-    <body class="admin-page">
         <div class="setup-container">
             <div class="setup-box">
                 <h1 class="setup-title">Welcome! 👋</h1>
@@ -157,17 +139,16 @@ $action = $_GET['action'] ?? '';
 $time_start = microtime(true);
 $admin = get_admin();
 
+// Configure page head
+$page_config = [
+    'title' => __('admin.title') . ' | ' . $site_title,
+    'body_class' => 'admin-page',
+    'custom_css' => '/css/admin.css',
+];
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?= htmlspecialchars(get_locale()) ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php _e('admin.title'); ?> | <?= htmlspecialchars($site_title) ?></title>
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-</head>
-<body class="admin-page">
     <div class="admin-header">
         <div class="admin-header-content">
             <h1>🛠️ <?php _e('admin.title'); ?></h1>

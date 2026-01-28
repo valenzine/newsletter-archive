@@ -23,6 +23,29 @@ return [
         'admin' => 'Admin',
     ],
     
+    // 404 / Errors
+    '404' => [
+        'title' => 'Page Not Found',
+        'heading' => '404',
+        'message' => 'Page not found',
+        'back_home' => 'Back to home',
+    ],
+    
+    // Setup Prompt (First-time installation)
+    'setup_prompt' => [
+        'title' => 'Welcome to your Newsletter Archive!',
+        'description' => 'This archive is not configured yet. Let\'s get you set up in just a few steps.',
+        'start_setup' => 'Start Setup',
+        'complete_setup' => 'Complete Setup',
+        'skip_for_now' => 'Skip for Now',
+        'what_youll_do' => 'What you\'ll do:',
+        'step_create_account' => 'Create your admin account',
+        'step_customize' => 'Customize site title and branding',
+        'step_add_api_key' => 'Add your MailerLite API key to .env',
+        'step_import' => 'Import your first campaigns',
+        'time_estimate' => 'Takes less than 5 minutes to complete!',
+    ],
+    
     // Sorting
     'sort' => [
         'newest_first' => 'Sort: Newest first',
@@ -46,6 +69,7 @@ return [
     // Search
     'search' => [
         'page_title' => 'Search Archive',
+        'search_query_title' => 'Search',
         'title' => 'Search Archive',
         'subtitle' => 'Search through %s campaigns',
         'placeholder' => 'What are you looking for?',
