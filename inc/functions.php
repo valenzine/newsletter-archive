@@ -601,3 +601,104 @@ function get_welcome_config(): array {
         'archive_button_text' => get_setting('welcome_archive_button_text', 'Browse Archive'),
     ];
 }
+
+/**
+ * Ensure path ends with trailing slash
+ * 
+ * @param string $path Directory path
+ * @return string Path with trailing slash
+ */
+function trailingslashit(string $path): string {
+    return rtrim($path, '/\\') . '/';
+}
+
+/**
+ * Fetch URL content with custom User-Agent
+ * 
+ * @param string $url URL to fetch
+ * @param int $timeout Timeout in seconds (default: 30)
+ * @return array [content, curl_error, http_code, headers]
+ */
+function fetch_url_with_user_agent(string $url, int $timeout = 30): array {
+    $ch = curl_init();
+    
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_MAXREDIRS => 5,
+        CURLOPT_TIMEOUT => $timeout,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; MailerLiteArchiver/1.0; +https://github.com/mailerlite-archive)',
+        CURLOPT_HEADER => false,
+        CURLOPT_HEADERFUNCTION => function($curl, $header) use (&$headers) {
+            $len = strlen($header);
+            $header = explode(':', $header, 2);
+            if (count($header) < 2) {
+                return $len;
+            }
+            $headers[strtolower(trim($header[0]))] = trim($header[1]);
+            return $len;
+        }
+    ]);
+    
+    $headers = [];
+    $content = curl_exec($ch);
+    $curl_error = curl_error($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    
+    curl_close($ch);
+    
+    return [$content, $curl_error, $http_code, $headers];
+}
+
+/**
+ * Generate filename from campaign ID (Mailchimp format)
+ * 
+ * @param string $campaign_id Campaign ID
+ * @return string Filename with .html extension
+ */
+function get_filename(string $campaign_id): string {
+    // Mailchimp uses campaign ID as filename
+    return basename($campaign_id) . '.html';
+}
+
+/**
+ * Match campaign to file in directory
+ * 
+ * Searches for campaign HTML file by exact match or pattern matching.
+ * 
+ * @param string $filename Expected filename
+ * @param string $directory Directory to search
+ * @return string|array Relative filename if found, or [404, 'Not found'] if not found
+ */
+function match_campaign_to_file(string $filename, string $directory): string|array {
+    // Ensure directory ends with slash
+    $directory = trailingslashit($directory);
+    
+    // Try exact match first
+    $exact_path = $directory . $filename;
+    if (file_exists($exact_path)) {
+        return $filename;
+    }
+    
+    // Try without .html extension and add it
+    $basename = basename($filename, '.html');
+    $html_path = $directory . $basename . '.html';
+    if (file_exists($html_path)) {
+        return $basename . '.html';
+    }
+    
+    // Scan directory for partial matches
+    $files = glob($directory . '*.html');
+    foreach ($files as $file) {
+        $file_basename = basename($file);
+        // Case-insensitive match
+        if (stripos($file_basename, $basename) !== false) {
+            return $file_basename;
+        }
+    }
+    
+    // Not found
+    return [404, 'File not found'];
+}

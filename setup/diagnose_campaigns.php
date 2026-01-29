@@ -52,7 +52,7 @@ function init_sse_stream() {
 // Handle recovery action
 if (isset($_POST['recover_campaigns'])) {
     // CSRF protection
-    if (empty($_POST['csrf_token']) || !validate_csrf_token($_POST['csrf_token'])) {
+    if (empty($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
         init_sse_stream();
         send_sse_event('CSRF token missing or invalid', 'error');
         exit;
@@ -180,7 +180,7 @@ if (isset($_POST['recover_campaigns'])) {
 // Handle database repair for campaigns with missing names  
 if (isset($_POST['repair_names'])) {
     // CSRF protection
-    if (empty($_POST['csrf_token']) || !validate_csrf_token($_POST['csrf_token'])) {
+    if (empty($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
         init_sse_stream();
         send_sse_event('CSRF token missing or invalid', 'error');
         exit;
@@ -236,7 +236,7 @@ if (isset($_POST['repair_names'])) {
 // Handle fixing filenames for campaigns with missing files
 if (isset($_POST['fix_filenames'])) {
     // CSRF protection
-    if (empty($_POST['csrf_token']) || !validate_csrf_token($_POST['csrf_token'])) {
+    if (empty($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
         init_sse_stream();
         send_sse_event('CSRF token missing or invalid', 'error');
         exit;

@@ -210,11 +210,21 @@ body.admin-page {
   text-decoration: none;
   color: inherit;
   display: block;
+  border-left: 4px solid transparent;
   
   &:hover {
     border-color: $color-primary;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(60,166,155,0.15);
+  }
+
+  &.action-card-danger {
+    border-left-color: #ef4444;
+
+    &:hover {
+      border-color: #ef4444;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
   }
   
   &.featured {
@@ -1293,4 +1303,236 @@ code {
   font-size: 0.875rem;
   color: #666;
   margin-top: 5px;
+}
+
+// =========================
+// Form Option Groups (mailerlite.php)
+// =========================
+.form-option-group {
+  margin-bottom: 1rem;
+}
+
+.form-option-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.force-limit-container {
+  display: none;
+  margin-bottom: 1rem;
+
+  &.active {
+    display: block;
+  }
+}
+
+.force-limit-input {
+  margin-left: 0.5rem;
+  padding: 8px;
+  width: 100px;
+}
+
+.force-limit-help {
+  display: block;
+  margin-top: 0.5rem;
+  color: #666;
+}
+
+.progress-log {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
+.action-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+// =========================
+// Onboarding Cards (setup.php)
+// =========================
+.onboarding-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 30px;
+  padding: 30px;
+  border-radius: 8px;
+
+  h2 {
+    color: white;
+    margin-top: 0;
+  }
+}
+
+.onboarding-progress-wrapper {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin: 15px 0;
+
+  .progress-text {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+}
+
+.onboarding-progress-bar {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+
+  .progress-fill {
+    background: #4ade80;
+    height: 100%;
+    transition: width 0.3s;
+  }
+}
+
+.onboarding-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.step-item {
+  display: flex;
+  gap: 15px;
+  align-items: start;
+  padding: 15px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border-left: 4px solid #d1d5db;
+
+  &.completed {
+    background: #f0fdf4;
+    border-left-color: #22c55e;
+  }
+
+  .step-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #1f2937;
+  }
+
+  .step-description {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 12px 0;
+  }
+
+  .step-complete {
+    color: #22c55e;
+    font-weight: 500;
+
+    a {
+      margin-left: 8px;
+    }
+  }
+
+  .step-disabled {
+    color: #9ca3af;
+  }
+
+  .step-help {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  .code-block {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .btn {
+    display: inline-block;
+    margin-right: 8px;
+  }
+}
+
+.setup-complete-message {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f0fdf4;
+  border-radius: 8px;
+  text-align: center;
+
+  .complete-title {
+    color: #15803d;
+    margin-top: 0;
+  }
+
+  .complete-description {
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    display: inline-block;
+  }
+}
+
+.danger-action-box {
+  border-left: 4px solid #ef4444;
+  padding: 20px;
+  background: #fef2f2;
+  border-radius: 4px;
+  margin: 20px 0;
+
+  h3 {
+    margin-top: 0;
+    color: #dc2626;
+  }
+
+  .danger-warning {
+    margin-top: 20px;
+
+    strong {
+      color: #dc2626;
+    }
+  }
+}
+
+.danger-actions {
+  margin-top: 20px;
+
+  .btn {
+    margin-right: 12px;
+  }
+
+  .btn-danger {
+    background: #ef4444;
+
+    &:hover {
+      background: #dc2626;
+    }
+  }
+}
+
+.inline-form {
+  display: inline;
+}
+
+.cron-example-title {
+  margin-top: 15px;
 }

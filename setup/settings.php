@@ -298,7 +298,7 @@ require_once __DIR__ . '/../inc/page_head.inc.php';
                             <strong>Cron URL:</strong><br>
                             <code><?= htmlspecialchars($site_base_url) ?>/setup/mailerlite.php?cron_token=<?= htmlspecialchars($settings['cron_token']) ?></code>
                             
-                            <p style="margin-top: 15px;"><strong>Example cron job (sync daily at 8 AM):</strong></p>
+                            <p class="cron-example-title"><strong>Example cron job (sync daily at 8 AM):</strong></p>
                             <code>0 8 * * * wget -qO- '<?= htmlspecialchars($site_base_url) ?>/setup/mailerlite.php?cron_token=<?= htmlspecialchars($settings['cron_token']) ?>'</code>
                         </div>
                     <?php endif; ?>
