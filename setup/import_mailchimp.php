@@ -7,7 +7,6 @@
  */
 
 require_once __DIR__ . '/../inc/bootstrap.php';
-require_once __DIR__ . '/../inc/session.inc.php';
 require_once __DIR__ . '/../inc/admin_auth.php';
 require_once __DIR__ . '/../inc/mailchimp_import.php';
 
