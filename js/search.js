@@ -577,9 +577,10 @@ function trackSearch(query, resultCount) {
         result_count: resultCount
     });
     
-    // Also send as a virtual page view with the search query in the title
+    // Send as a virtual page view using the current document.title for consistency
+    // (document.title is already set by performSearch() before this function is called)
     gtag('event', 'page_view', {
-        page_title: `${window.searchCfg.i18n.search.search_query_title || 'Search'}: ${query}`,
+        page_title: document.title,
         page_location: window.location.origin + searchUrl,
         page_path: searchUrl
     });

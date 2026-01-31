@@ -596,18 +596,21 @@ const ArchiveApp = {
         const campaignUrl = `/${campaignId}`;
         const campaignTitle = campaign.subject || 'Untitled Campaign';
         
-        // Send virtual page view to GA4
+        // Build full page title (consistent with browser tab)
+        const fullTitle = `${campaignTitle} | ${this.config.siteName}`;
+        
+        // Update document title first for consistency
+        document.title = fullTitle;
+        
+        // Send virtual page view to GA4 with the same title
         gtag('event', 'page_view', {
-            page_title: campaignTitle,
+            page_title: fullTitle,
             page_location: window.location.origin + campaignUrl,
             page_path: campaignUrl,
             campaign_id: campaignId,
             campaign_subject: campaign.subject,
             campaign_sent_at: campaign.sent_at
         });
-        
-        // Also update document title for browser history
-        document.title = `${campaignTitle} | ${this.config.siteName}`;
     }
 };
 
