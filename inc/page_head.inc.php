@@ -17,8 +17,10 @@
  *   ];
  *   require __DIR__ . '/inc/page_head.inc.php';
  * 
- * IMPORTANT: This file outputs BOTH <html> opening tag AND complete <head> section.
- * After including this file, immediately open <body> tag with the provided $body_class.
+ * IMPORTANT: This file outputs the DOCTYPE, the opening <html> tag, the complete <head>
+ * section, and the opening <body> tag (including the configured $body_class).
+ * After including this file, do NOT output another <body> tag; start your page content
+ * immediately.
  */
 
 // Ensure bootstrap is loaded

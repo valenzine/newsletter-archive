@@ -93,6 +93,7 @@ $page_config = [
     'title' => 'Admin Login - ' . $site_title,
     'noindex' => true,
     'custom_css' => '/css/admin.css',
+    'body_class' => 'admin-page',
 ];
 
 
