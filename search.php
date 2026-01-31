@@ -33,7 +33,7 @@ $page_config = [
     'custom_css' => '/css/styles.css',
     'head_scripts' => '
     <script>
-        window.searchCfg = ' . json_encode($search_config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';
+        window.searchCfg = ' . json_encode($search_config, JSON_UNESCAPED_UNICODE) . ';
     </script>
     <script src="/js/search.js?ver=' . htmlspecialchars(get_composer_version()) . '" defer></script>',
 ];
