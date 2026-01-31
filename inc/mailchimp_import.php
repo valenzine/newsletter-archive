@@ -322,8 +322,7 @@ function import_campaigns_from_csv($csv_path, $html_inventory, $destination_dir)
             
             // Index for full-text search if we have content
             if ($content_path && file_exists($destination_dir . '/' . $campaign_id . '.html')) {
-                $html_content = file_get_contents($destination_dir . '/' . $campaign_id . '.html');
-                index_campaign_content($campaign_id, $subject, $html_content);
+                index_campaign_content($campaign_id);
             }
             
             $stats['imported']++;
