@@ -424,10 +424,16 @@ function sanitize_filename(string $name): string {
 /**
  * Import campaigns from Mailchimp CSV export
  * 
+ * Note: This function is kept for potential future use with Mailchimp API imports.
+ * The current active Mailchimp importer (inc/mailchimp_import.php) handles ZIP exports.
+ * This CSV-based function could be useful when campaigns are fetched via API.
+ * 
  * @param string $csv_path Path to campaigns.csv
  * @param string $content_dir Directory containing HTML files
  * @param callable|null $progressCallback Progress callback
  * @return array Import result
+ * 
+ * @see process_mailchimp_import() in inc/mailchimp_import.php for ZIP-based import
  */
 function import_mailchimp_campaigns(string $csv_path, string $content_dir, ?callable $progressCallback = null): array {
     if (!file_exists($csv_path)) {
@@ -601,3 +607,4 @@ function get_welcome_config(): array {
         'archive_button_text' => get_setting('welcome_archive_button_text', 'Browse Archive'),
     ];
 }
+

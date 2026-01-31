@@ -23,6 +23,29 @@ return [
         'admin' => 'Administración',
     ],
     
+    // 404 / Errors
+    '404' => [
+        'title' => 'Página No Encontrada',
+        'heading' => '404',
+        'message' => 'Página no encontrada',
+        'back_home' => 'Volver al inicio',
+    ],
+    
+    // Setup Prompt (First-time installation)
+    'setup_prompt' => [
+        'title' => '¡Bienvenido a tu Archivo de Newsletter!',
+        'description' => 'Este archivo aún no está configurado. Configurémoslo en unos pocos pasos.',
+        'start_setup' => 'Comenzar Configuración',
+        'complete_setup' => 'Completar Configuración',
+        'skip_for_now' => 'Omitir por Ahora',
+        'what_youll_do' => 'Lo que harás:',
+        'step_create_account' => 'Creá tu cuenta de administrador',
+        'step_customize' => 'Personalizá el título y la marca del sitio',
+        'step_add_api_key' => 'Agregá tu clave API de MailerLite al archivo .env',
+        'step_import' => 'Importá tus primeras campañas',
+        'time_estimate' => '¡Lleva menos de 5 minutos completarlo!',
+    ],
+    
     // Sorting
     'sort' => [
         'newest_first' => 'Ordenar: Más recientes primero',
@@ -46,6 +69,7 @@ return [
     // Search
     'search' => [
         'page_title' => 'Buscar en el archivo',
+        'search_query_title' => 'Búsqueda',
         'title' => 'Buscar en el archivo',
         'subtitle' => 'Buscá entre %s correos',
         'placeholder' => '¿Qué estás buscando?',

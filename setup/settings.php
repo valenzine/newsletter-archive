@@ -9,7 +9,6 @@
 header('Content-Type: text/html; charset=UTF-8');
 
 require_once __DIR__ . '/../inc/bootstrap.php';
-require_once __DIR__ . '/../inc/session.inc.php';
 require_once __DIR__ . '/../inc/database.inc.php';
 require_once __DIR__ . '/../inc/functions.php';
 require_once __DIR__ . '/../inc/admin_auth.php';
@@ -79,18 +78,18 @@ function get_setting_display(string $key, string $env_key = '', $default = ''): 
     return $default;
 }
 
+
+// Configure page head
+$page_config = [
+    'title' => 'Site Settings - ' . $site_title,
+    'noindex' => true,
+    'body_class' => 'admin-page',
+    'custom_css' => '/css/admin.css',
+];
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Site Settings - <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>">
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-</head>
-<body class="admin-page">
 
     <!-- Admin Header -->
     <div class="admin-header">
@@ -298,7 +297,7 @@ function get_setting_display(string $key, string $env_key = '', $default = ''): 
                             <strong>Cron URL:</strong><br>
                             <code><?= htmlspecialchars($site_base_url) ?>/setup/mailerlite.php?cron_token=<?= htmlspecialchars($settings['cron_token']) ?></code>
                             
-                            <p style="margin-top: 15px;"><strong>Example cron job (sync daily at 8 AM):</strong></p>
+                            <p class="cron-example-title"><strong>Example cron job (sync daily at 8 AM):</strong></p>
                             <code>0 8 * * * wget -qO- '<?= htmlspecialchars($site_base_url) ?>/setup/mailerlite.php?cron_token=<?= htmlspecialchars($settings['cron_token']) ?>'</code>
                         </div>
                     <?php endif; ?>

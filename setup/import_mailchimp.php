@@ -7,7 +7,6 @@
  */
 
 require_once __DIR__ . '/../inc/bootstrap.php';
-require_once __DIR__ . '/../inc/session.inc.php';
 require_once __DIR__ . '/../inc/admin_auth.php';
 require_once __DIR__ . '/../inc/mailchimp_import.php';
 
@@ -30,17 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['mailchimp_zip'])) {
     );
 }
 
+
+// Configure page head
+$page_config = [
+    'title' => 'Mailchimp Import | ' . $site_title,
+    'body_class' => 'admin-page',
+    'custom_css' => '/css/admin.css',
+];
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mailchimp Import | <?= htmlspecialchars($site_title) ?></title>
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-</head>
-<body class="admin-page">
 
 <div class="admin-header">
     <div class="admin-header-content">
@@ -136,159 +135,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['mailchimp_zip'])) {
         
     </div>
 </div>
-
-<style>
-.instructions {
-    background: #f8f9fa;
-    border-left: 4px solid #447BA6;
-    padding: 20px;
-    margin-bottom: 30px;
-    line-height: 1.6;
-}
-
-.instructions h2 {
-    margin-top: 0;
-}
-
-.instructions h3 {
-    margin-top: 20px;
-    color: #333;
-}
-
-.instructions h4 {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #666;
-}
-
-.instructions ul {
-    margin: 10px 0;
-    padding-left: 25px;
-}
-
-.instructions li {
-    margin: 5px 0;
-}
-
-.instructions code {
-    background: #e9ecef;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-}
-
-.instructions pre {
-    background: #fff;
-    border: 1px solid #dee2e6;
-    padding: 15px;
-    border-radius: 4px;
-    overflow-x: auto;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.format-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0;
-    font-size: 14px;
-}
-
-.format-table th,
-.format-table td {
-    border: 1px solid #dee2e6;
-    padding: 10px;
-    text-align: left;
-}
-
-.format-table th {
-    background: #e9ecef;
-    font-weight: 600;
-}
-
-.format-table code {
-    background: #e9ecef;
-    padding: 2px 6px;
-    border-radius: 3px;
-}
-
-.import-form {
-    background: #fff;
-    border: 1px solid #dee2e6;
-    padding: 30px;
-    border-radius: 4px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.form-group input[type="file"] {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    border: 2px dashed #ccc;
-    border-radius: 4px;
-    background: #f8f9fa;
-    cursor: pointer;
-}
-
-.help-text {
-    margin-top: 5px;
-    font-size: 12px;
-    color: #666;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.stat-card {
-    text-align: center;
-    padding: 15px;
-    background: white;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-}
-
-.stat-card.success {
-    border-color: #28a745;
-    background: #f0fff4;
-}
-
-.stat-card.warning {
-    border-color: #ffc107;
-    background: #fffbf0;
-}
-
-.stat-card.error {
-    border-color: #dc3545;
-    background: #fff5f5;
-}
-
-.stat-value {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: #666;
-    margin-top: 5px;
-}
-</style>
 
 </body>
 </html>

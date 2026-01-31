@@ -88,42 +88,22 @@ if (preg_match('#^([a-f0-9]{16})$#i', $path, $matches)) {
 
 // Not found - return 404
 http_response_code(404);
+
+// Load bootstrap for i18n and site config
+require_once __DIR__ . '/inc/bootstrap.php';
+
+// Configure page head
+$page_config = [
+    'title' => __('404.title') . ' | ' . $site_title,
+    'body_class' => 'error-page',
+    'custom_css' => '/css/styles.css',
+];
+
+// Output unified page head
+require __DIR__ . '/inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found | Newsletter Archive</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            max-width: 600px;
-            margin: 100px auto;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 4em;
-            margin: 0;
-            color: #333;
-        }
-        p {
-            font-size: 1.2em;
-            color: #666;
-        }
-        a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <h1>404</h1>
-    <p>Page not found</p>
-    <p><a href="/">Back to home</a></p>
+    <h1><?php _e('404.heading'); ?></h1>
+    <p><?php _e('404.message'); ?></p>
+    <p><a href="/"><?php _e('404.back_home'); ?></a></p>
 </body>
 </html>

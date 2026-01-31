@@ -26,29 +26,21 @@ $search_config = [
     'i18n' => get_translations()
 ];
 
-?>
-<!DOCTYPE html>
-<html lang="<?= htmlspecialchars(get_locale()) ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php _e('search.page_title'); ?> | <?= htmlspecialchars($site_title) ?></title>
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/styles.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-    
-    <!-- Social Metadata -->
-    <?php require_once __DIR__ . '/inc/head.inc.php'; ?>
-    
-    <!-- Config -->
+// Configure page head
+$page_config = [
+    'title' => __('search.page_title') . ' | ' . $site_title,
+    'body_class' => 'search-page',
+    'custom_css' => '/css/styles.css',
+    'head_scripts' => '
     <script>
-        window.searchCfg = <?= json_encode($search_config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+        window.searchCfg = ' . json_encode($search_config, JSON_UNESCAPED_UNICODE) . ';
     </script>
-    
-    <!-- Scripts -->
-    <script src="/js/search.js?ver=<?= htmlspecialchars(get_composer_version()) ?>" defer></script>
-</head>
-<body class="search-page">
+    <script src="/js/search.js?ver=' . htmlspecialchars(get_composer_version()) . '" defer></script>',
+];
+
+// Output unified page head (includes <html>, <head>, and opening <body> tag)
+require_once __DIR__ . '/inc/page_head.inc.php';
+?>
     
     <div class="search-container">
         <a href="/" class="back-link"><?php _e('nav.back_to_list'); ?></a>

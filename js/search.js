@@ -199,7 +199,8 @@ searchClear.addEventListener('click', () => {
     pagination.classList.add('hidden');
     pagination.innerHTML = ''; // Clear pagination content
     const siteName = window.searchCfg?.siteName || 'Newsletter Archive';
-    document.title = `Search Archive | ${siteName}`;
+    const pageTitle = window.searchCfg.i18n.search.page_title || 'Search Archive';
+    document.title = `${pageTitle} | ${siteName}`;
 
     // Clear URL - go back to base search path
     const basePath = window.location.pathname.includes('buscar') ? '/buscar' : '/search';
@@ -258,7 +259,8 @@ async function performSearch() {
         pagination.innerHTML = ''; // Clear pagination content
         // Restore default title
         const siteName = window.searchCfg?.siteName || 'Newsletter Archive';
-        document.title = `Search Archive | ${siteName}`;
+        const pageTitle = window.searchCfg.i18n.search.page_title || 'Search Archive';
+        document.title = `${pageTitle} | ${siteName}`;
         return;
     }
 
@@ -371,7 +373,8 @@ async function performSearch() {
         if (data.success) {
             // Update page title with search query for analytics
             const siteName = window.searchCfg?.siteName || 'Newsletter Archive';
-            document.title = `Search: ${currentQuery} | ${siteName}`;
+            const searchPrefix = window.searchCfg.i18n.search.search_query_title || 'Search';
+            document.title = `${searchPrefix}: ${currentQuery} | ${siteName}`;
             
             // Track search in Google Analytics
             trackSearch(currentQuery, data.total);
@@ -576,7 +579,7 @@ function trackSearch(query, resultCount) {
     
     // Also send as a virtual page view with the search query in the title
     gtag('event', 'page_view', {
-        page_title: `Search: ${query}`,
+        page_title: `${window.searchCfg.i18n.search.search_query_title || 'Search'}: ${query}`,
         page_location: window.location.origin + searchUrl,
         page_path: searchUrl
     });

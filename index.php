@@ -28,147 +28,43 @@ try {
 
 // If setup is needed, show setup page
 if ($needs_setup && !isset($_GET['skip_setup'])) {
+    $page_config = [
+        'title' => 'Setup Required - ' . $site_title,
+        'body_class' => 'setup-prompt-page',
+        'custom_css' => '/css/styles.css',
+    ];
+    
+    // Output unified page head
+    require __DIR__ . '/inc/page_head.inc.php';
 ?>
-    <!DOCTYPE html>
-    <html lang="<?= htmlspecialchars(get_locale()) ?>">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Setup Required - <?= htmlspecialchars($site_title) ?></title>
-<?php require_once __DIR__ . '/inc/head.inc.php'; ?>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            }
-
-            .setup-prompt {
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                max-width: 600px;
-                padding: 40px;
-                text-align: center;
-            }
-
-            .setup-icon {
-                font-size: 64px;
-                margin-bottom: 20px;
-            }
-
-            h1 {
-                font-size: 28px;
-                color: #1f2937;
-                margin-bottom: 16px;
-            }
-
-            p {
-                font-size: 16px;
-                color: #6b7280;
-                margin-bottom: 30px;
-                line-height: 1.6;
-            }
-
-            .btn {
-                display: inline-block;
-                background: #667eea;
-                color: white;
-                padding: 14px 32px;
-                border-radius: 8px;
-                text-decoration: none;
-                font-weight: 500;
-                font-size: 16px;
-                transition: background 0.2s;
-            }
-
-            .btn:hover {
-                background: #5568d3;
-            }
-
-            .btn-secondary {
-                background: #e5e7eb;
-                color: #374151;
-                margin-left: 12px;
-            }
-
-            .btn-secondary:hover {
-                background: #d1d5db;
-            }
-
-            .steps {
-                text-align: left;
-                background: #f9fafb;
-                border-radius: 8px;
-                padding: 24px;
-                margin-top: 24px;
-            }
-
-            .steps h3 {
-                font-size: 18px;
-                color: #1f2937;
-                margin-bottom: 16px;
-            }
-
-            .steps ol {
-                padding-left: 20px;
-            }
-
-            .steps li {
-                color: #4b5563;
-                margin-bottom: 12px;
-                line-height: 1.6;
-            }
-
-            .steps code {
-                background: #fff;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-size: 14px;
-                color: #667eea;
-            }
-        </style>
-    </head>
-
-    <body>
         <div class="setup-prompt">
             <div class="setup-icon">
                 <img src="/img/box.png" alt="Newsletter Archive" width="100">
             </div>
-            <h1>Welcome to your Newsletter Archive!</h1>
-            <p>This archive is not configured yet. Let's get you set up in just a few steps.</p>
+            <h1><?php _e('setup_prompt.title'); ?></h1>
+            <p><?php _e('setup_prompt.description'); ?></p>
 
             <?php if (!$admin_exists): ?>
-                <a href="/setup/setup.php" class="btn">🛠️ Start Setup</a>
+                <a href="/setup/setup.php" class="btn">🛠️ <?php _e('setup_prompt.start_setup'); ?></a>
             <?php else: ?>
-                <a href="/setup/setup.php?onboarding=1" class="btn">🛠️ Complete Setup</a>
+                <a href="/setup/setup.php?onboarding=1" class="btn">🛠️ <?php _e('setup_prompt.complete_setup'); ?></a>
             <?php endif; ?>
 
-            <a href="/?skip_setup=1" class="btn btn-secondary">Skip for Now</a>
+            <a href="/?skip_setup=1" class="btn btn-secondary"><?php _e('setup_prompt.skip_for_now'); ?></a>
 
             <div class="steps">
-                <h3>What you'll do:</h3>
+                <h3><?php _e('setup_prompt.what_youll_do'); ?></h3>
                 <ol>
                     <?php if (!$admin_exists): ?>
-                        <li>Create your admin account</li>
+                        <li><?php _e('setup_prompt.step_create_account'); ?></li>
                     <?php endif; ?>
-                    <li>Customize site title and branding</li>
-                    <li>Add your MailerLite API key to <code>.env</code></li>
-                    <li>Import your first campaigns</li>
+                    <li><?php _e('setup_prompt.step_customize'); ?></li>
+                    <li><?php _e('setup_prompt.step_add_api_key'); ?></li>
+                    <li><?php _e('setup_prompt.step_import'); ?></li>
                 </ol>
                 <p style="margin-top: 16px; color: #9ca3af; font-size: 14px;">
-                    Takes less than 5 minutes to complete!
+                    <?php _e('setup_prompt.time_estimate'); ?>
                 </p>
             </div>
         </div>
@@ -212,26 +108,16 @@ if ($direct_campaign_id) {
 // Body CSS classes
 $body_classes = [$is_mobile ? 'mobile' : 'desktop'];
 
+// Configure page head
+$page_config = [
+    'title' => $page_title,
+    'body_class' => implode(' ', $body_classes),
+    'custom_css' => '/css/styles.css',
+];
+
+// Output unified page head
+require __DIR__ . '/inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?= htmlspecialchars(get_locale()) ?>">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?></title>
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/styles.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-
-    <meta name="description" content="<?= htmlspecialchars($site_description) ?>">
-    <meta name="theme-color" content="#ffffff">
-
-    <!-- Social Metadata & Favicons -->
-    <?php require_once __DIR__ . '/inc/head.inc.php'; ?>
-</head>
-
-<body class="<?= implode(' ', $body_classes) ?>">
 
     <?php if ($show_welcome): ?>
         <!-- Welcome Page Overlay -->

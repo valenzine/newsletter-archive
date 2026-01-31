@@ -70,33 +70,16 @@ if (!admin_exists()) {
     }
     
     // Show first-time setup form
+    $page_config = [
+        'title' => 'First-Time Setup - ' . $site_title,
+        'noindex' => true,
+        'custom_css' => '/css/admin.css',
+        'body_class' => 'admin-page',
+    ];
+    
+    // Output unified page head
+    require_once __DIR__ . '/../inc/page_head.inc.php';
     ?>
-    <!DOCTYPE html>
-    <html lang="<?= htmlspecialchars(get_locale()) ?>">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="robots" content="noindex, nofollow">
-        <title>First-Time Setup - <?= htmlspecialchars($site_title ?? 'Newsletter Archive') ?></title>
-        <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>">
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-        <style>
-            .setup-container { max-width: 500px; margin: 100px auto; padding: 0 20px; }
-            .setup-box { background: var(--card-bg, #fff); border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            .setup-title { text-align: center; margin-bottom: 10px; }
-            .setup-description { text-align: center; color: var(--text-muted, #666); margin-bottom: 30px; }
-            .form-group { margin-bottom: 20px; }
-            .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-            .form-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color, #ddd); border-radius: 4px; font-size: 16px; box-sizing: border-box; }
-            .form-group input:focus { outline: none; border-color: var(--primary-color, #007bff); box-shadow: 0 0 0 3px rgba(0,123,255,0.1); }
-            .btn-setup { width: 100%; padding: 12px; background: var(--primary-color, #007bff); color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: 500; cursor: pointer; }
-            .btn-setup:hover { background: var(--primary-hover, #0056b3); }
-            .error-message { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px; }
-            .success-message { background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; text-align: center; }
-            .success-message a { color: #155724; font-weight: 500; text-decoration: underline; }
-        </style>
-    </head>
-    <body class="admin-page">
         <div class="setup-container">
             <div class="setup-box">
                 <h1 class="setup-title">Welcome! 👋</h1>
@@ -157,17 +140,16 @@ $action = $_GET['action'] ?? '';
 $time_start = microtime(true);
 $admin = get_admin();
 
+// Configure page head
+$page_config = [
+    'title' => __('admin.title') . ' | ' . $site_title,
+    'body_class' => 'admin-page',
+    'custom_css' => '/css/admin.css',
+];
+
+// Output unified page head
+require_once __DIR__ . '/../inc/page_head.inc.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?= htmlspecialchars(get_locale()) ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php _e('admin.title'); ?> | <?= htmlspecialchars($site_title) ?></title>
-    <link rel="stylesheet" href="/css/admin.css?ver=<?= htmlspecialchars(get_composer_version()) ?>" />
-<?php require_once __DIR__ . '/../inc/head.inc.php'; ?>
-</head>
-<body class="admin-page">
     <div class="admin-header">
         <div class="admin-header-content">
             <h1>🛠️ <?php _e('admin.title'); ?></h1>
@@ -191,12 +173,16 @@ $admin = get_admin();
                     
                     // Handle hide/unhide actions
                     if (isset($_POST['toggle_hidden'])) {
-                        $campaign_id = $_POST['campaign_id'] ?? '';
-                        $campaign = get_campaign($campaign_id);
-                        if ($campaign) {
-                            $new_status = !$campaign['hidden'];
-                            set_campaign_hidden($campaign_id, $new_status);
-                            echo "<div class='alert alert-success'>Campaign " . ($new_status ? 'hidden' : 'unhidden') . ".</div>";
+                        if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+                            echo "<div class='alert alert-error'>Invalid request. Please try again.</div>";
+                        } else {
+                            $campaign_id = $_POST['campaign_id'] ?? '';
+                            $campaign = get_campaign($campaign_id);
+                            if ($campaign) {
+                                $new_status = !$campaign['hidden'];
+                                set_campaign_hidden($campaign_id, $new_status);
+                                echo "<div class='alert alert-success'>Campaign " . ($new_status ? 'hidden' : 'unhidden') . ".</div>";
+                            }
                         }
                     }
                     
@@ -221,8 +207,9 @@ $admin = get_admin();
                         echo "<td>" . htmlspecialchars($campaign['source']) . "</td>";
                         echo "<td>" . $status . "</td>";
                         echo "<td>";
-                        echo "<form method='post' style='display:inline'>";
+                        echo "<form method='post' class='inline-form'>";
                         echo "<input type='hidden' name='campaign_id' value='" . htmlspecialchars($campaign['id']) . "'>";
+                        echo "<input type='hidden' name='csrf_token' value='" . htmlspecialchars(generate_csrf_token()) . "'>";
                         echo "<button type='submit' name='toggle_hidden' class='btn btn-small'>$btn_text</button>";
                         echo "</form>";
                         echo "</td>";
@@ -257,16 +244,16 @@ $admin = get_admin();
                     } else {
                         // Show confirmation form
                         $campaign_count = get_campaign_count(true);
-                        echo "<div class='result-box' style='border-left: 4px solid #ef4444;'>";
+                        echo "<div class='danger-action-box'>";
                         echo "<h3>⚠️ Warning: Irreversible Action</h3>";
                         echo "<p>This will permanently delete <strong>all {$campaign_count} campaigns</strong> from the database.</p>";
                         echo "<p>Your admin account and site settings will be preserved.</p>";
-                        echo "<p style='margin-top: 20px;'><strong>This action cannot be undone!</strong></p>";
+                        echo "<div class='danger-warning'><strong>This action cannot be undone!</strong></div>";
                         echo "</div>";
                         
-                        echo "<form method='POST' action='?action=reset' style='margin-top: 20px;'>";
+                        echo "<form method='POST' action='?action=reset' class='danger-actions'>";
                         echo "<input type='hidden' name='csrf_token' value='" . htmlspecialchars(generate_csrf_token()) . "'>";
-                        echo "<button type='submit' name='confirm_reset' class='btn' style='background: #ef4444; margin-right: 12px;' onclick='return confirm(\"Are you absolutely sure? This will delete all campaigns!\");'>";
+                        echo "<button type='submit' name='confirm_reset' class='btn btn-danger' onclick='return confirm(\"Are you absolutely sure? This will delete all campaigns!\");'>";
                         echo "🗑️ Yes, Reset Database";
                         echo "</button>";
                         echo "<a href='?' class='btn btn-secondary'>Cancel</a>";
@@ -292,66 +279,66 @@ $admin = get_admin();
                         $steps_complete = ($has_api_key ? 1 : 0) + ($has_customized ? 1 : 0) + ($has_campaigns ? 1 : 0);
                         $progress_percent = round(($steps_complete / 3) * 100);
                     ?>
-                        <div class="result-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 30px;">
-                            <h2 style="color: white; margin-top: 0;">👋 Welcome! Let's get your newsletter archive set up</h2>
-                            <div style="background: rgba(255,255,255,0.2); border-radius: 8px; padding: 8px 16px; margin: 15px 0;">
-                                <div style="font-size: 14px; margin-bottom: 5px;">Setup Progress: <?= $steps_complete ?>/3 steps complete</div>
-                                <div style="background: rgba(255,255,255,0.3); border-radius: 4px; height: 8px; overflow: hidden;">
-                                    <div style="background: #4ade80; height: 100%; width: <?= $progress_percent ?>%; transition: width 0.3s;"></div>
+                        <div class="onboarding-card">
+                            <h2>👋 Welcome! Let's get your newsletter archive set up</h2>
+                            <div class="onboarding-progress-wrapper">
+                                <div class="progress-text">Setup Progress: <?= $steps_complete ?>/3 steps complete</div>
+                                <div class="onboarding-progress-bar">
+                                    <div class="progress-fill" style="width: <?= $progress_percent ?>%;"></div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="result-box">
                             <h3>📋 Setup Checklist</h3>
-                            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                            <div class="onboarding-steps">
                                 
                                 <!-- Step 1: Configure Settings -->
-                                <div style="display: flex; gap: 15px; align-items: start; padding: 15px; background: <?= $has_customized ? '#f0fdf4' : '#f9fafb' ?>; border-radius: 8px; border-left: 4px solid <?= $has_customized ? '#22c55e' : '#d1d5db' ?>;">
-                                    <div style="font-size: 24px; flex-shrink: 0;"><?= $has_customized ? '✅' : '⚪' ?></div>
-                                    <div style="flex: 1;">
-                                        <h4 style="margin: 0 0 8px 0;">Customize Your Site</h4>
-                                        <p style="margin: 0 0 12px 0; color: #6b7280;">Set your site title, description, and social sharing images to match your brand.</p>
+                                <div class="step-item <?= $has_customized ? 'completed' : '' ?>">
+                                    <div class="step-icon"><?= $has_customized ? '✅' : '⚪' ?></div>
+                                    <div class="step-content">
+                                        <h4 class="step-title">Customize Your Site</h4>
+                                        <p class="step-description">Set your site title, description, and social sharing images to match your brand.</p>
                                         <?php if (!$has_customized): ?>
-                                            <a href="/setup/settings.php" class="btn btn-primary" style="display: inline-block;">⚙️ Go to Settings</a>
+                                            <a href="/setup/settings.php" class="btn btn-primary">⚙️ Go to Settings</a>
                                         <?php else: ?>
-                                            <span style="color: #22c55e; font-weight: 500;">✓ Complete! <a href="/setup/settings.php" style="margin-left: 8px;">Edit Settings</a></span>
+                                            <span class="step-complete">✓ Complete! <a href="/setup/settings.php">Edit Settings</a></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                                 
                                 <!-- Step 2: Add API Key -->
-                                <div style="display: flex; gap: 15px; align-items: start; padding: 15px; background: <?= $has_api_key ? '#f0fdf4' : '#f9fafb' ?>; border-radius: 8px; border-left: 4px solid <?= $has_api_key ? '#22c55e' : '#d1d5db' ?>;">
-                                    <div style="font-size: 24px; flex-shrink: 0;"><?= $has_api_key ? '✅' : '⚪' ?></div>
-                                    <div style="flex: 1;">
-                                        <h4 style="margin: 0 0 8px 0;">Add MailerLite API Key</h4>
-                                        <p style="margin: 0 0 12px 0; color: #6b7280;">Add your MailerLite API key to <code>.env</code> file to enable campaign syncing.</p>
+                                <div class="step-item <?= $has_api_key ? 'completed' : '' ?>">
+                                    <div class="step-icon"><?= $has_api_key ? '✅' : '⚪' ?></div>
+                                    <div class="step-content">
+                                        <h4 class="step-title">Add MailerLite API Key</h4>
+                                        <p class="step-description">Add your MailerLite API key to <code>.env</code> file to enable campaign syncing.</p>
                                         <?php if (!$has_api_key): ?>
-                                            <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 13px; margin-bottom: 8px;">
+                                            <div class="code-block">
                                                 MAILERLITE_API_KEY=your-api-key-here
                                             </div>
-                                            <p style="margin: 0; font-size: 14px; color: #6b7280;">Get your API key from: <a href="https://dashboard.mailerlite.com/integrations/api" target="_blank">MailerLite Dashboard → Integrations → API</a></p>
+                                            <p class="step-help">Get your API key from: <a href="https://dashboard.mailerlite.com/integrations/api" target="_blank">MailerLite Dashboard → Integrations → API</a></p>
                                         <?php else: ?>
-                                            <span style="color: #22c55e; font-weight: 500;">✓ API key configured!</span>
+                                            <span class="step-complete">✓ API key configured!</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                                 
                                 <!-- Step 3: Sync Campaigns -->
-                                <div style="display: flex; gap: 15px; align-items: start; padding: 15px; background: <?= $has_campaigns ? '#f0fdf4' : '#f9fafb' ?>; border-radius: 8px; border-left: 4px solid <?= $has_campaigns ? '#22c55e' : '#d1d5db' ?>;">
-                                    <div style="font-size: 24px; flex-shrink: 0;"><?= $has_campaigns ? '✅' : '⚪' ?></div>
-                                    <div style="flex: 1;">
-                                        <h4 style="margin: 0 0 8px 0;">Import Your Campaigns</h4>
-                                        <p style="margin: 0 0 12px 0; color: #6b7280;">Sync your email campaigns from MailerLite or import from Mailchimp.</p>
+                                <div class="step-item <?= $has_campaigns ? 'completed' : '' ?>">
+                                    <div class="step-icon"><?= $has_campaigns ? '✅' : '⚪' ?></div>
+                                    <div class="step-content">
+                                        <h4 class="step-title">Import Your Campaigns</h4>
+                                        <p class="step-description">Sync your email campaigns from MailerLite or import from Mailchimp.</p>
                                         <?php if (!$has_campaigns): ?>
                                             <?php if ($has_api_key): ?>
-                                                <a href="mailerlite.php" class="btn btn-primary" style="display: inline-block; margin-right: 8px;">🔄 Sync from MailerLite</a>
-                                                <a href="import_mailchimp.php" class="btn btn-secondary" style="display: inline-block;">📦 Import from Mailchimp</a>
+                                                <a href="mailerlite.php" class="btn btn-primary">🔄 Sync from MailerLite</a>
+                                                <a href="import_mailchimp.php" class="btn btn-secondary">📦 Import from Mailchimp</a>
                                             <?php else: ?>
-                                                <span style="color: #9ca3af;">Add API key first to sync campaigns</span>
+                                                <span class="step-disabled">Add API key first to sync campaigns</span>
                                             <?php endif; ?>
                                         <?php else: ?>
-                                            <span style="color: #22c55e; font-weight: 500;">✓ You have <?= $total_campaigns ?> campaign<?= $total_campaigns != 1 ? 's' : '' ?>! <a href="mailerlite.php" style="margin-left: 8px;">Sync More</a></span>
+                                            <span class="step-complete">✓ You have <?= $total_campaigns ?> campaign<?= $total_campaigns != 1 ? 's' : '' ?>! <a href="mailerlite.php">Sync More</a></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -359,10 +346,10 @@ $admin = get_admin();
                             </div>
                             
                             <?php if ($steps_complete >= 3): ?>
-                                <div style="margin-top: 20px; padding: 15px; background: #f0fdf4; border-radius: 8px; text-align: center;">
-                                    <h4 style="color: #15803d; margin-top: 0;">🎉 Setup Complete!</h4>
-                                    <p style="margin-bottom: 15px;">Your newsletter archive is ready. <a href="/" target="_blank">View your public archive →</a></p>
-                                    <a href="?" class="btn btn-secondary" style="display: inline-block;">Hide Checklist</a>
+                                <div class="setup-complete-message">
+                                    <h4 class="complete-title">🎉 Setup Complete!</h4>
+                                    <p class="complete-description">Your newsletter archive is ready. <a href="/" target="_blank">View your public archive →</a></p>
+                                    <a href="?" class="btn btn-secondary">Hide Checklist</a>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -390,7 +377,7 @@ $admin = get_admin();
                             <p>View, hide, or unhide campaigns.</p>
                         </a>
                         
-                        <a href='?action=reset' class='action-card' style='border-left: 4px solid #ef4444;'>
+                        <a href='?action=reset' class='action-card action-card-danger'>
                             <h3>🗑️ Reset Database</h3>
                             <p>Delete all campaigns and start fresh. (Keeps admin account)</p>
                         </a>
