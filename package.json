@@ -1,6 +1,6 @@
 {
   "name": "newsletter-archive",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Self-hosted email campaign archive for MailerLite users",
   "license": "MPL-2.0",
   "scripts": {

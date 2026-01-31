@@ -17,6 +17,24 @@ define('REMEMBER_ME_DURATION', 14 * 24 * 60 * 60); // 14 days
 define('CSRF_TOKEN_NAME', 'admin_csrf_token');
 
 /**
+ * Ensure admin session is started with secure cookie settings
+ * Call this before any session-dependent operations (auth checks, CSRF)
+ */
+function ensure_admin_session(): void {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_set_cookie_params([
+            'lifetime' => 3600,
+            'path' => '/setup/',
+            'domain' => '',
+            'secure' => ($_ENV['APP_ENV'] ?? 'production') === 'production',
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ]);
+        session_start();
+    }
+}
+
+/**
  * Check if admin account exists
  * @return bool
  */
@@ -104,6 +122,9 @@ function is_admin_authenticated(): bool {
     if (($_ENV['APP_ENV'] ?? 'production') === 'development') {
         return true;
     }
+    
+    // Ensure session is started
+    ensure_admin_session();
     
     // Check session
     if (isset($_SESSION['admin_id']) && $_SESSION['admin_id'] === 1) {
@@ -318,6 +339,9 @@ function csrf_field(): string {
  * @param bool $allowSetup Allow access if no admin exists (for first-time setup)
  */
 function require_admin(bool $allowSetup = false): void {
+    // Ensure session is started (required for CSRF and auth)
+    ensure_admin_session();
+    
     // Initialize admin tables if they don't exist
     ensure_admin_tables();
     

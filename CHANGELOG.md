@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-01-31
+- Refactor: Centralized session initialization in `ensure_admin_session()` helper; removed duplicate session code from `login.php`, `logout.php`, `setup.php`
+- Fix: Session now auto-initialized in `is_admin_authenticated()` and `require_admin()`, fixing CSRF "Invalid request" errors on settings page
+
 ## [0.2.0] - 2026-01-31
 
 - Refactor: Unified page head template (`inc/page_head.inc.php`) replaces `inc/head.inc.php`; all pages now use `$page_config` array for metadata, favicons, fonts, CSS, and analytics
