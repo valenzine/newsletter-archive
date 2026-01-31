@@ -31,6 +31,7 @@ if ($needs_setup && !isset($_GET['skip_setup'])) {
     $page_config = [
         'title' => 'Setup Required - ' . $site_title,
         'body_class' => 'setup-prompt-page',
+        'custom_css' => '/css/styles.css',
     ];
     
     // Output unified page head

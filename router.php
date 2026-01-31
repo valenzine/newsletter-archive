@@ -89,10 +89,14 @@ if (preg_match('#^([a-f0-9]{16})$#i', $path, $matches)) {
 // Not found - return 404
 http_response_code(404);
 
+// Load bootstrap for i18n and site config
+require_once __DIR__ . '/inc/bootstrap.php';
+
 // Configure page head
 $page_config = [
     'title' => __('404.title') . ' | ' . $site_title,
     'body_class' => 'error-page',
+    'custom_css' => '/css/styles.css',
 ];
 
 // Output unified page head

@@ -2298,14 +2298,12 @@ body.vip-campaign .preview-fade {
 // =========================
 // Error Pages (404, etc.)
 // =========================
-.error-page {
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    max-width: 600px;
-    margin: 100px auto;
-    padding: 20px;
-    text-align: center;
-  }
+body.error-page {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 20px;
+  text-align: center;
 
   h1 {
     font-size: 4em;
@@ -2331,22 +2329,20 @@ body.vip-campaign .preview-fade {
 // =========================
 // Setup Prompt Page Styles
 // =========================
-.setup-prompt-page {
+body.setup-prompt-page {
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 
   .setup-prompt {
     background: white;

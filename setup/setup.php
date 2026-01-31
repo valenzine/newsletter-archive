@@ -74,6 +74,7 @@ if (!admin_exists()) {
         'title' => 'First-Time Setup - ' . $site_title,
         'noindex' => true,
         'custom_css' => '/css/admin.css',
+        'body_class' => 'admin-page',
     ];
     
     // Output unified page head
@@ -172,12 +173,16 @@ require_once __DIR__ . '/../inc/page_head.inc.php';
                     
                     // Handle hide/unhide actions
                     if (isset($_POST['toggle_hidden'])) {
-                        $campaign_id = $_POST['campaign_id'] ?? '';
-                        $campaign = get_campaign($campaign_id);
-                        if ($campaign) {
-                            $new_status = !$campaign['hidden'];
-                            set_campaign_hidden($campaign_id, $new_status);
-                            echo "<div class='alert alert-success'>Campaign " . ($new_status ? 'hidden' : 'unhidden') . ".</div>";
+                        if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+                            echo "<div class='alert alert-error'>Invalid request. Please try again.</div>";
+                        } else {
+                            $campaign_id = $_POST['campaign_id'] ?? '';
+                            $campaign = get_campaign($campaign_id);
+                            if ($campaign) {
+                                $new_status = !$campaign['hidden'];
+                                set_campaign_hidden($campaign_id, $new_status);
+                                echo "<div class='alert alert-success'>Campaign " . ($new_status ? 'hidden' : 'unhidden') . ".</div>";
+                            }
                         }
                     }
                     
@@ -204,6 +209,7 @@ require_once __DIR__ . '/../inc/page_head.inc.php';
                         echo "<td>";
                         echo "<form method='post' class='inline-form'>";
                         echo "<input type='hidden' name='campaign_id' value='" . htmlspecialchars($campaign['id']) . "'>";
+                        echo "<input type='hidden' name='csrf_token' value='" . htmlspecialchars(generate_csrf_token()) . "'>";
                         echo "<button type='submit' name='toggle_hidden' class='btn btn-small'>$btn_text</button>";
                         echo "</form>";
                         echo "</td>";
