@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 Entries are organized by type (Refactor, Fix, Enhancement, Add, Code Quality) for quick scanning, rather than category sections.
 
 ## [0.2.3] - 2026-02-01
-- Fix: Sidebar is no longer limnited to 100 entries; now shows all campaigns in archive (up to 1000).
+- Fix: Sidebar is no longer limited to 100 entries; now shows all campaigns in archive (up to 1000).
 - Fix: Mailchimp merge tags (`*|IF:xxx|*`, `*|REWARDS|*`, etc.) are now removed from campaign display
 - Enhancement: Campaign viewer scroll behavior improved across all devices:
   - Content panel automatically resets to top when navigating between campaigns (desktop & mobile)
