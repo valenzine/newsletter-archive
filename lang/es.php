@@ -48,8 +48,8 @@ return [
     
     // Sorting
     'sort' => [
-        'newest_first' => 'Ordenar: Más recientes primero',
-        'oldest_first' => 'Ordenar: Más antiguos primero',
+        'newest_first' => 'Orden: Más recientes primero',
+        'oldest_first' => 'Orden: Más antiguos primero',
     ],
     
     // Campaign list

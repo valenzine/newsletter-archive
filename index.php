@@ -148,10 +148,10 @@ require __DIR__ . '/inc/page_head.inc.php';
                     <h1><?= htmlspecialchars($site_title) ?></h1>
                 </div>
                 <div id="filters">
+                    <button class="btn btn-sort" id="sort-toggle"><?php _e('sort.newest_first'); ?></button>
                     <a href="/search" class="btn btn-search" aria-label="<?= htmlspecialchars(__('nav.search')) ?>">
                         🔍 <?php _e('nav.search'); ?>
                     </a>
-                    <button class="btn btn-sort" id="sort-toggle"><?php _e('sort.newest_first'); ?></button>
                 </div>
             </header>
 

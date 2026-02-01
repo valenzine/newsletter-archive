@@ -56,8 +56,9 @@ if ($is_ajax) {
     echo '</div>';
     echo '</div>';
     
-    // Read campaign HTML and extract only the body content
+    // Read campaign HTML and clean merge tags
     $content = file_get_contents($full_path);
+    $content = clean_campaign_html($content);
     
     // Extract just the body content (strip head with styles that would affect our page)
     if (preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches)) {

@@ -245,7 +245,7 @@ const ArchiveApp = {
             const formattedDate = date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
             
             return `
-            <li class="email show" data-index="${index}">
+            <li class="email" data-index="${index}">
                 <a href="/${campaign.id}" 
                    data-campaign-id="${campaign.id}" 
                    class="${campaign.id === this.state.currentCampaignId ? 'active' : ''}">
@@ -304,28 +304,54 @@ const ArchiveApp = {
         }
         if (newActive) {
             newActive.classList.add('active');
+            
+            // Scroll sidebar to show active campaign
+            // Use instant scroll for initial page load (no previous active), smooth for navigation
+            const scrollBehavior = previousActive ? 'smooth' : 'auto';
+            setTimeout(() => {
+                this.scrollToActiveCampaign(scrollBehavior);
+            }, 50);
+        }
+        
+        // Mobile: show campaign view BEFORE adding loading indicator
+        // This ensures the container is visible when we add the overlay
+        if (this.isMobileView()) {
+            this.showMobileCampaignView();
+            this.updateBackButton();  // Update back button label
         }
         
         // Show loading with spinner overlay
-        this.showLoadingIndicator(contentPanel, this.t('campaign.loading'));
+        // On mobile, use the content-panel (parent) as loading container for proper sizing
+        const loadingContainer = this.isMobileView() 
+            ? document.getElementById('content-panel') 
+            : contentPanel;
+        this.showLoadingIndicator(loadingContainer, this.t('campaign.loading'));
+        
+        // Immediately scroll to top (before loading new content)
+        // Mobile: scroll window, Desktop: scroll .content-panel
+        if (this.isMobileView()) {
+            window.scrollTo(0, 0);
+        } else {
+            const scrollablePanel = document.getElementById('content-panel');
+            if (scrollablePanel) {
+                scrollablePanel.scrollTop = 0;
+            }
+        }
         
         // Update URL
         if (updateHistory) {
             history.pushState({ campaignId }, '', `/${campaignId}`);
         }
         
-        // Mobile: show campaign view
-        if (this.isMobileView()) {
-            this.showMobileCampaignView();
-            this.updateBackButton();  // Update back button label
-        } else {
-        }
-        
         try {
             const response = await fetch(`/view_campaign.php?id=${campaignId}&ajax=1`);
             const content = await response.text();
             
-            this.removeLoadingIndicator(contentPanel);
+            // Remove loading indicator from the same container we added it to
+            const loadingContainer = this.isMobileView() 
+                ? document.getElementById('content-panel') 
+                : contentPanel;
+            this.removeLoadingIndicator(loadingContainer);
             contentPanel.innerHTML = content;
             
             // Format campaign date with locale
@@ -349,11 +375,22 @@ const ArchiveApp = {
             // Track campaign view in Google Analytics
             this.trackCampaignView(campaignId);
             
-            // Scroll to top of content
-            contentPanel.scrollTop = 0;
+            // Scroll to top of content (safety check after content loads)
+            // Mobile: scroll window, Desktop: scroll .content-panel
+            if (this.isMobileView()) {
+                window.scrollTo(0, 0);
+            } else {
+                const scrollablePanel = document.getElementById('content-panel');
+                if (scrollablePanel) {
+                    scrollablePanel.scrollTop = 0;
+                }
+            }
         } catch (error) {
             console.error('Failed to load campaign:', error);
-            this.removeLoadingIndicator(contentPanel);
+            const loadingContainer = this.isMobileView() 
+                ? document.getElementById('content-panel') 
+                : contentPanel;
+            this.removeLoadingIndicator(loadingContainer);
             contentPanel.innerHTML = `<div class="error">${this.t('campaign.load_error')}</div>`;
         } finally {
             this.state.loading = false;
@@ -364,15 +401,19 @@ const ArchiveApp = {
 
     // Close campaign (mobile)
     closeCampaign() {
-        this.state.currentCampaignId = null;
-        this.state.currentCampaignIndex = -1;
+        // On mobile, keep the campaign ID and active state so we can scroll to it
+        // On desktop, clear everything since we show a placeholder
+        if (!this.isMobileView()) {
+            this.state.currentCampaignId = null;
+            this.state.currentCampaignIndex = -1;
+            
+            // Remove active state
+            document.querySelectorAll('.email-link').forEach(link => {
+                link.classList.remove('active');
+            });
+        }
         
-        // Remove active state
-        document.querySelectorAll('.email-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        // Show placeholder
+        // Show placeholder (desktop only, mobile hides this panel)
         const contentPanel = document.getElementById('campaign-content');
         if (contentPanel) {
             contentPanel.innerHTML = `
@@ -382,7 +423,7 @@ const ArchiveApp = {
             `;
         }
         
-        // Mobile: show list view
+        // Mobile: show list view (keeps active state to scroll to)
         if (this.isMobileView()) {
             this.showMobileListView();
         }
@@ -418,6 +459,58 @@ const ArchiveApp = {
         if (navBar) navBar.classList.add('hidden');
         if (listPanel) listPanel.classList.remove('viewing-campaign');
         if (contentPanel) contentPanel.classList.remove('viewing-campaign');
+        
+        // Scroll to last viewed campaign on mobile (instant, no animation)
+        setTimeout(() => {
+            this.scrollToActiveCampaign('instant');
+        }, 100);
+    },
+    
+    // Scroll sidebar to show active campaign (centered if possible)
+    scrollToActiveCampaign(behavior = 'smooth') {
+        const activeLink = document.querySelector('#email-list a.active');
+        if (!activeLink) return;
+        
+        // Get the list item parent
+        const listItem = activeLink.closest('li.email');
+        if (!listItem) return;
+        
+        // Mobile: scroll window, Desktop: scroll list container
+        if (this.isMobileView()) {
+            // On mobile, scroll window to show the active item
+            const itemRect = listItem.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Calculate scroll to center the item in viewport
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            const itemTopRelativeToPage = currentScroll + itemRect.top;
+            const centerOffset = (windowHeight / 2) - (itemRect.height / 2);
+            
+            window.scrollTo({
+                top: Math.max(0, itemTopRelativeToPage - centerOffset),
+                behavior: behavior
+            });
+        } else {
+            // Desktop: scroll list container
+            const listContainer = document.getElementById('email-list-container');
+            if (!listContainer) return;
+            
+            // Get actual dimensions and positions relative to viewport
+            const itemRect = listItem.getBoundingClientRect();
+            const containerRect = listContainer.getBoundingClientRect();
+            
+            // Calculate scroll needed to center the item
+            const currentScroll = listContainer.scrollTop;
+            const itemTopRelativeToContainer = itemRect.top - containerRect.top;
+            const centerOffset = (containerRect.height / 2) - (itemRect.height / 2);
+            
+            const scrollTo = currentScroll + itemTopRelativeToContainer - centerOffset;
+            
+            listContainer.scrollTo({
+                top: Math.max(0, scrollTo),
+                behavior: behavior
+            });
+        }
     },
 
     // Navigate to prev/next campaign
