@@ -593,7 +593,7 @@ footer {
 }
 
 ul#email-list {
-  margin: 20px;
+  margin: 0;
   font-size: 80%;
   list-style-type: none;
   padding: 0;
@@ -1493,6 +1493,7 @@ body.vip-campaign .preview-fade {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  padding: 20px;
 }
 
 // Right panel: Content view (replaces frame_home.php)
@@ -1887,7 +1888,7 @@ body.vip-campaign .preview-fade {
   }
 
   .email-list-panel {
-    width: 100%;
+    width: 100% !important;
     height: auto;
     border-right: none;
     border-bottom: 1px solid $color-border;
@@ -1911,7 +1912,7 @@ body.vip-campaign .preview-fade {
   }
 
   #email-list-container {
-    margin-top: 140px;
+    margin-top: 110px;
     overflow-y: visible;
     max-height: none;
   }
