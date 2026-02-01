@@ -37,7 +37,7 @@ require_once __DIR__ . '/../inc/database.inc.php';
 try {
     // Get query parameters
     $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-    $limit = isset($_GET['limit']) ? max(1, min(100, intval($_GET['limit']))) : 20;
+    $limit = isset($_GET['limit']) ? max(1, min(1000, intval($_GET['limit']))) : 20;
     $sort_order = isset($_GET['sort']) && $_GET['sort'] === 'asc' ? 'asc' : 'desc';
     $search_term = isset($_GET['search']) ? trim($_GET['search']) : null;
     
