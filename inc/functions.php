@@ -608,3 +608,28 @@ function get_welcome_config(): array {
     ];
 }
 
+/**
+ * Clean Mailchimp merge tags from campaign HTML
+ * 
+ * Removes conditional merge tags and other Mailchimp-specific markup
+ * that shouldn't be displayed to end users.
+ * 
+ * @param string $html Campaign HTML content
+ * @return string Cleaned HTML
+ */
+function clean_campaign_html(string $html): string {
+    // Remove conditional merge tags with content
+    // Matches: *|IF:REWARDS|* *|HTML:REWARDS|* *|END:IF|*
+    $html = preg_replace('/\*\|IF:[^\|]+\|\*.*?\*\|END:IF\|\*/s', '', $html);
+    
+    // Remove commented merge tags
+    // Matches: <!--*|IF:MC_PREVIEW_TEXT|*-->
+    $html = preg_replace('/<!--\s*\*\|IF:[^\|]+\|\*\s*-->/s', '', $html);
+    
+    // Remove any remaining standalone merge tag references
+    // Matches: *|REWARDS|*, *|HTML:REWARDS|*, etc.
+    $html = preg_replace('/\*\|[A-Z_:]+\|\*/', '', $html);
+    
+    return $html;
+}
+

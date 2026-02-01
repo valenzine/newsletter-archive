@@ -29,6 +29,9 @@ try {
 // Load database functions for settings hybrid approach
 require_once __DIR__ . '/database.inc.php';
 
+// Load utility functions
+require_once __DIR__ . '/functions.php';
+
 // -----------------------------------------------------------------------------
 // Site Configuration (Hybrid: .env + Database)
 // -----------------------------------------------------------------------------
