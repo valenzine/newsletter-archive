@@ -245,7 +245,7 @@ const ArchiveApp = {
             const formattedDate = date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
             
             return `
-            <li class="email show" data-index="${index}">
+            <li class="email" data-index="${index}">
                 <a href="/${campaign.id}" 
                    data-campaign-id="${campaign.id}" 
                    class="${campaign.id === this.state.currentCampaignId ? 'active' : ''}">
