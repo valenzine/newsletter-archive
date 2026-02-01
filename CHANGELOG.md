@@ -2,8 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+Entries are organized by type (Refactor, Fix, Enhancement, Add, Code Quality) for quick scanning, rather than category sections.
+
+## [0.2.3] - 2026-02-01
+- Fix: Sidebar is no longer limnited to 100 entries; now shows all campaigns in archive (up to 1000).
+- Fix: Mailchimp merge tags (`*|IF:xxx|*`, `*|REWARDS|*`, etc.) are now removed from campaign display
+- Enhancement: Campaign viewer scroll behavior improved across all devices:
+  - Content panel automatically resets to top when navigating between campaigns (desktop & mobile)
+  - Sidebar scrolls to center selected campaign on direct URL access
+  - Mobile back-to-list returns to last viewed campaign position (instant scroll)
+- Fix: Mobile loading indicator visual glitches resolved by loading into properly sized parent container
+- Code Quality: Include `inc/functions.php` in bootstrap to make utility functions available globally
 
 ## [0.2.2] - 2026-01-31
 - Fix: GA4 page titles now consistent across all page views; always use full format `{Title} | {Site Name}` to prevent duplicate entries in analytics
@@ -28,69 +39,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add: New i18n keys for 404 page, setup prompts, and search query titles in `lang/en.php` and `lang/es.php`
 
 ## [0.1.1] - 2026-01-25
-
-### Analytics
-- ADDED: Google Analytics 4 (GA4) integration for user behavior tracking
-- ADDED: GA4 Measurement ID configuration in admin settings
-- ADDED: Support for GOOGLE_ANALYTICS_ID environment variable (.env fallback)
-- ADDED: Conditional loading - GA4 only loads when ID is configured
-- ADDED: GA4 tracking on all public pages (campaign list, individual campaigns, search)
-- ADDED: Virtual page view tracking for SPA navigation (tracks every campaign view)
-- ADDED: Campaign metadata in GA4 events (campaign_id, campaign_subject, campaign_sent_at)
-- ADDED: Search event tracking with search terms and result counts
-- ADDED: Dynamic browser title updates for better analytics and UX
-
-### URLs & Routing
-- IMPROVED: Clean URLs for campaigns - now `/{campaign_id}` instead of `/?id={campaign_id}`
-- IMPROVED: All internal links and APIs updated to use clean URL format
-- IMPROVED: Better SEO, shareability, and professional appearance
-- FIXED: Router regex pattern to correctly match 16-character campaign IDs
-
-### UI/UX
-- IMPROVED: Select dropdown styling in admin settings (consistent with other form inputs)
+- Add: Google Analytics 4 (GA4) integration for user behavior tracking
+- Add: GA4 Measurement ID configuration in admin settings
+- Add: Support for GOOGLE_ANALYTICS_ID environment variable (.env fallback)
+- Add: GA4 tracking on all public pages (campaign list, individual campaigns, search)
+- Add: Virtual page view tracking for SPA navigation (tracks every campaign view)
+- Add: Campaign metadata in GA4 events (campaign_id, campaign_subject, campaign_sent_at)
+- Add: Search event tracking with search terms and result counts
+- Add: Dynamic browser title updates for better analytics and UX
+- Enhancement: Clean URLs for campaigns - now `/{campaign_id}` instead of `/?id={campaign_id}`
+- Enhancement: All internal links and APIs updated to use clean URL format
+- Enhancement: Better SEO, shareability, and professional appearance
+- Enhancement: Select dropdown styling in admin settings (consistent with other form inputs)
+- Fix: Router regex pattern to correctly match 16-character campaign IDs
+- Fix: GA4 conditional loading - GA4 only loads when ID is configured
 
 ## [0.1.0] - 2025-01-24
-
 Initial public release of Newsletter Archive.
 
-### Core Features
-- ADDED: MailerLite API integration for automatic campaign syncing
-- ADDED: One-time Mailchimp import from ZIP exports (for migrations)
-- ADDED: Full-text search with SQLite FTS5 (diacritic-insensitive, literal phrase support)
-- ADDED: Responsive inbox-style layout with mobile, tablet, and desktop support
-- ADDED: Clean URL routing (`/search/{query}`, `/{campaign_id}`)
-
-### Admin Interface
-- ADDED: Database-backed admin authentication with rate limiting
-- ADDED: Remember me tokens (14-day duration)
-- ADDED: CSRF protection on all admin forms
-- ADDED: First-time setup wizard for admin account creation
-- ADDED: Admin dashboard for sync operations and configuration
-- ADDED: Settings page for customizing site without editing files
-- ADDED: Campaign diagnostics tool
-- ADDED: Automated sync support via cron jobs with secure token authentication
-
-### Configuration
-- ADDED: Hybrid configuration system (.env + database settings)
-- ADDED: Configurable social metadata (Open Graph, Twitter Cards)
-- ADDED: Welcome page with customizable content
-- ADDED: Environment-based configuration via .env files
-
-### Internationalization
-- ADDED: i18n support with translation system
-- ADDED: English (default) and Spanish (Argentina) translations
-- ADDED: Locale setting configurable via admin settings
-
-### Search Features
-- ADDED: Full-text search across subject, preview text, and content
-- ADDED: Date range filtering
-- ADDED: Sort by relevance, newest, or oldest
-- ADDED: Search result highlighting with excerpts
-- ADDED: Back to search functionality with query preservation
-
-### Technical
-- TECHNICAL: SQLite database with auto-initialization
-- TECHNICAL: Modern Sass/SCSS build system
-- TECHNICAL: PHP 8.3+ with type hints
-- TECHNICAL: Composer-based dependency management
+- Add: MailerLite API integration for automatic campaign syncing
+- Add: One-time Mailchimp import from ZIP exports (for migrations)
+- Add: Full-text search with SQLite FTS5 (diacritic-insensitive, literal phrase support)
+- Add: Responsive inbox-style layout with mobile, tablet, and desktop support
+- Add: Clean URL routing (`/search/{query}`, `/{campaign_id}`)
+- Add: Database-backed admin authentication with rate limiting
+- Add: Remember me tokens (14-day duration)
+- Add: CSRF protection on all admin forms
+- Add: First-time setup wizard for admin account creation
+- Add: Admin dashboard for sync operations and configuration
+- Add: Settings page for customizing site without editing files
+- Add: Campaign diagnostics tool
+- Add: Automated sync support via cron jobs with secure token authentication
+- Add: Hybrid configuration system (.env + database settings)
+- Add: Configurable social metadata (Open Graph, Twitter Cards)
+- Add: Welcome page with customizable content
+- Add: Environment-based configuration via .env files
+- Add: i18n support with translation system
+- Add: English (default) and Spanish (Argentina) translations
+- Add: Locale setting configurable via admin settings
+- Add: Date range filtering for search results
+- Add: Sort by relevance, newest, or oldest for search
+- Add: Search result highlighting with excerpts
+- Add: Back to search functionality with query preservation
+- Code Quality: SQLite database with auto-initialization
+- Code Quality: Modern Sass/SCSS build system
+- Code Quality: PHP 8.3+ with type hints
+- Code Quality: Composer-based dependency management
 
