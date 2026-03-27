@@ -9,6 +9,14 @@ Turn your newsletter archive into a beautiful, searchable website that you fully
 
 ---
 
+## 🌱 Origin
+
+This project began as the campaign archive for [**Cómo funcionan las cosas**](https://comofuncionanlascos.as), a newsletter published since April 2017—first via Mailchimp (2017–2023) and then via MailerLite (2023–present). The live archive runs at [museo.curiosidad.club](https://museo.curiosidad.club) and includes additional custom features tailored to that publication.
+
+This repository is a generalized, stripped-down version of that original codebase, adapted so that any newsletter author can deploy their own archive without modification.
+
+---
+
 ## ✨ Features
 
 ### Core Functionality
@@ -198,6 +206,21 @@ npm run sass:all    # Compile both
 ```
 
 Source files: [css/styles.scss](css/styles.scss), [css/admin.scss](css/admin.scss)
+
+---
+
+## 🗺️ Roadmap
+
+The following features exist in the original [museo.curiosidad.club](https://museo.curiosidad.club) archive and are planned for eventual inclusion in this open-source version:
+
+| Feature | Description |
+|---------|-------------|
+| **Campaign management UI** | Admin interface to override individual campaign metadata (subject, visibility, date) without touching the campaigns |
+| **Campaign categorization** | Define custom categories using regex patterns matched against campaign names, then filter and browse the archive by category |
+| **Member-only content gating** | Mark individual campaigns as subscriber-only and restrict public access to logged-in readers |
+| **Reader authentication (magic link)** | Passwordless email login for paid subscribers to access gated content |
+| **SSO (Discourse, Google, etc.)** | Allow readers to log in using an existing Discourse forum account, Google account, etc. |
+| **Subscriber management** | Create, import, and manage the list of registered reader accounts from the admin panel |
 
 ---
 
